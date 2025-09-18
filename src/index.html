@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Console - Interactive JavaScript Environment</title>
+    <meta
+      name="description"
+      content="An interactive JavaScript console with support for HTML, CSS and JavaScript with UI rendering"
+    />
+    <meta name="author" content="Finny Kochummen" />
+    <meta
+      name="keywords"
+      content="JavaScript, Console, HTML, CSS, Code Editor, Interactive"
+    />
+    <meta name="theme-color" content="#79c0ff" />
+    <meta
+      property="og:title"
+      content="JS Console - Interactive JavaScript Environment"
+    />
+    <meta
+      property="og:description"
+      content="An interactive JavaScript console with support for HTML, CSS and JavaScript with UI rendering"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://console.jsformatter.net" />
+    <meta
+      property="og:image"
+      content="https://console.jsformatter.net/og-image.png"
+    />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <h1>Console</h1>
+        <div class="header-controls">
+          <button
+            id="emergency-stop"
+            class="icon-btn danger emergency"
+            style="display: none"
+            title="Emergency Stop"
+          >
+            <i data-lucide="octagon-x"></i>
+          </button>
+          <button id="toggle-theme" class="icon-btn" title="Toggle Theme">
+            <i data-lucide="moon"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="language-tabs">
+        <div class="language-section">
+          <div class="language-tab-buttons">
+            <button class="language-tab active" data-language="javascript">
+              <span class="tab-icon"><i data-lucide="zap"></i></span>
+              <span class="tab-content">
+                <span class="tab-filename">main.js</span>
+                <span class="tab-language">JavaScript</span>
+              </span>
+            </button>
+            <button class="language-tab" data-language="html">
+              <span class="tab-icon"><i data-lucide="code"></i></span>
+              <span class="tab-content">
+                <span class="tab-filename">index.html</span>
+                <span class="tab-language">HTML</span>
+              </span>
+            </button>
+            <button class="language-tab" data-language="css">
+              <span class="tab-icon"><i data-lucide="palette"></i></span>
+              <span class="tab-content">
+                <span class="tab-filename">style.css</span>
+                <span class="tab-language">CSS</span>
+              </span>
+            </button>
+          </div>
+          <div class="editor-controls">
+            <button
+              id="run-code"
+              class="icon-btn primary"
+              title="Run Code (Ctrl+Enter)"
+            >
+              <i data-lucide="play"></i>
+            </button>
+            <button
+              id="toggle-autorun"
+              class="icon-btn"
+              title="Toggle Auto-Run"
+              data-state="off"
+            >
+              <i data-lucide="refresh-cw"></i>
+            </button>
+            <button id="format-code" class="icon-btn" title="Format Code">
+              <i data-lucide="align-left"></i>
+            </button>
+          </div>
+        </div>
+        <div class="output-section-tabs">
+          <div class="output-tabs">
+            <button class="tab-button active" data-tab="console">
+              <span class="tab-icon"><i data-lucide="terminal"></i></span>
+              <span class="tab-content">
+                <span class="tab-filename">console.log</span>
+                <span class="tab-language">Console</span>
+              </span>
+            </button>
+            <button class="tab-button" data-tab="render">
+              <span class="tab-icon"><i data-lucide="monitor"></i></span>
+              <span class="tab-content">
+                <span class="tab-filename">preview.html</span>
+                <span class="tab-language">Output</span>
+              </span>
+            </button>
+          </div>
+          <div class="output-controls">
+            <button
+              id="clear-console"
+              class="icon-btn tab-clear-btn"
+              title="Clear Console"
+              data-tab-target="console"
+            >
+              <i data-lucide="trash-2"></i>
+            </button>
+            <button
+              id="clear-render"
+              class="icon-btn tab-clear-btn"
+              title="Clear Output"
+              data-tab-target="render"
+              style="display: none"
+            >
+              <i data-lucide="eraser"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <main class="app-main">
+        <div class="editor-section">
+          <div id="monaco-editor" class="monaco-editor-container"></div>
+        </div>
+
+        <div class="output-section">
+          <div id="console-output" class="output-panel active">
+            <div class="console-content">
+              <div id="console-log" class="console-log"></div>
+            </div>
+          </div>
+
+          <div id="html-render" class="output-panel">
+            <iframe
+              id="render-frame"
+              class="render-frame"
+              sandbox="allow-scripts"
+            ></iframe>
+          </div>
+        </div>
+      </main>
+
+      <div class="status-bar">
+        <span id="status-text">Ready</span>
+        <span id="execution-time"></span>
+      </div>
+    </div>
+
+    <!-- Monaco Editor Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <script>
+      require.config({
+        paths: {
+          vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs",
+        },
+      });
+    </script>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Check if Lucide is available
+        if (typeof lucide !== "undefined" && lucide.createIcons) {
+          lucide.createIcons();
+        } else {
+          // Fallback: replace icon elements with text
+          const icons = document.querySelectorAll("[data-lucide]");
+          icons.forEach((icon) => {
+            const iconName = icon.getAttribute("data-lucide");
+            const fallbackText = {
+              moon: "🌙",
+              sun: "☀️",
+              "octagon-x": "⛔",
+              zap: "⚡",
+              code: "📝",
+              palette: "🎨",
+              play: "▶️",
+              "refresh-cw": "🔄",
+              "align-left": "📐",
+              terminal: "💻",
+              monitor: "🖥️",
+              "trash-2": "🗑️",
+              eraser: "🧹",
+            };
+            icon.textContent = fallbackText[iconName] || "●";
+          });
+        }
+
+        // Also listen for app initialization to update theme icon
+        document.addEventListener("appInitialized", function () {
+          if (typeof lucide !== "undefined" && lucide.createIcons) {
+            lucide.createIcons();
+          }
+        });
+      });
+    </script>
+
+    <!-- Application Scripts -->
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
