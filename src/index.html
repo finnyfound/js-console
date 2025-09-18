@@ -3,57 +3,58 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JS Console - Interactive JavaScript Environment</title>
+    <title>Online JavaScript, HTML & CSS Playground and Formatter</title>
     <meta
       name="description"
-      content="An interactive JavaScript console with support for HTML, CSS and JavaScript with UI rendering"
+      content="Run, beautify, and validate JavaScript, HTML, and CSS code instantly online. Test your code in real-time and improve workflow with formatting and debugging tools."
     />
     <meta name="author" content="Finny Kochummen" />
     <meta
       name="keywords"
-      content="JavaScript, Console, HTML, CSS, Code Editor, Interactive"
+      content="JavaScript playground, online formatter, HTML editor, CSS beautifier, run code online, JS validator, code beautify, web development tools"
     />
     <meta name="theme-color" content="#79c0ff" />
     <meta
       property="og:title"
-      content="JS Console - Interactive JavaScript Environment"
+      content="Online JavaScript, HTML & CSS Playground and Formatter"
     />
     <meta
       property="og:description"
-      content="An interactive JavaScript console with support for HTML, CSS and JavaScript with UI rendering"
+      content="Run, beautify, and validate JavaScript, HTML, and CSS code instantly online. Test your code in real-time and improve workflow with formatting and debugging tools."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://console.jsformatter.net" />
     <meta
       property="og:image"
-      content="https://console.jsformatter.net/og-image.png"
+      content="https://console.jsformatter.net/favicon.png"
     />
     <link rel="icon" type="image/png" href="favicon.png" />
+
+    <!-- Font preloading for better performance -->
+    <link
+      rel="preload"
+      href="https://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqDyx4vEW3qOqaY.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="https://fonts.gstatic.com/s/sourcecodepro/v23/HI_diYsKILxRpg3hIP6sJ7fM7PqlPevWnsUnxlA.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-    <!-- Coding Fonts -->
+    <!-- Coding Fonts - Optimized for performance -->
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
@@ -66,7 +67,10 @@
   <body>
     <div class="app-container">
       <header class="app-header">
-        <h1>JS Console | JSFormatter.net</h1>
+        <h1>
+          Online JavaScript, HTML & CSS Playground and Formatter |
+          JSFormatter.net
+        </h1>
         <div class="header-controls">
           <button
             id="emergency-stop"

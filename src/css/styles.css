@@ -9,8 +9,8 @@
 :root {
   --font-family-ui: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro',
-    'Roboto Mono', 'Space Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  --font-family-mono: 'Source Code Pro', 'Consolas', 'Monaco', 'Courier New',
+    monospace;
 }
 
 body {

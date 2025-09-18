@@ -2,7 +2,7 @@ class JSConsoleApp {
   // Constants for font families - single source of truth
   static FONT_FAMILIES = {
     ui: "'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-    mono: "'Source Code Pro', 'Consolas', 'Monaco', 'JetBrains Mono', 'Fira Code', 'Roboto Mono', 'Space Mono', 'Courier New', monospace",
+    mono: "'Source Code Pro', 'Consolas', 'Monaco', 'Courier New', monospace",
   };
 
   // Constants for placeholder templates - single source of truth
