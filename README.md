@@ -10,9 +10,6 @@ An interactive JavaScript console with multi-language support, live preview, and
 - **🖼️ HTML Renderer**: Live preview for HTML/CSS output with iframe sandboxing
 - **🎨 Modern UI**: Clean interface with Lucide icons and Urbanist font
 - **🌙 Theme Support**: Light and dark themes with persistent settings
-- **📱 Responsive Design**: Works seamlessly on desktop and mobile devices
-- **🔒 Security**: XSS protection and safe code execution environment
-- **📊 State Management**: Variable tracking and command history
 - **⚙️ Auto-Run**: Optional automatic code execution on changes
 
 ## Getting Started
@@ -70,7 +67,6 @@ npm run preview   # Preview production build
 
 ### Console Features
 
-- **Interactive Console**: Terminal-style console with `>` prompts
 - **Command History**: Navigate through previous commands with arrow keys
 - **Autocomplete**: IntelliSense-powered suggestions as you type
 - **Variable Tracking**: Automatic detection of declared variables and functions
@@ -79,14 +75,14 @@ npm run preview   # Preview production build
 
 - Use the `render` object to output content to the preview tab:
   ```javascript
-  render.html("<h1>Hello World</h1>");
-  render.text("Plain text output");
+  render.html('<h1>Hello World</h1>');
+  render.text('Plain text output');
   render.table([
-    ["Name", "Age"],
-    ["John", 25],
-    ["Jane", 30],
+    ['Name', 'Age'],
+    ['John', 25],
+    ['Jane', 30],
   ]);
-  render.list(["Item 1", "Item 2", "Item 3"]);
+  render.list(['Item 1', 'Item 2', 'Item 3']);
   render.clear(); // Clear the preview
   ```
 
