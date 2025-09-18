@@ -191,7 +191,7 @@
             <iframe
               id="render-frame"
               class="render-frame"
-              sandbox="allow-scripts"
+              sandbox="allow-scripts allow-same-origin allow-forms"
             ></iframe>
           </div>
         </div>
@@ -256,12 +256,23 @@
     <script type="module" src="js/main.js"></script>
 
     <script>
-      window.va =
-        window.va ||
-        function () {
-          (window.vaq = window.vaq || []).push(arguments);
-        };
+      // Only initialize Vercel Analytics in main window context, not in iframes
+      if (window.self === window.top) {
+        window.va =
+          window.va ||
+          function () {
+            (window.vaq = window.vaq || []).push(arguments);
+          };
+      }
     </script>
-    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      // Only load Vercel Analytics script in main window context
+      if (window.self === window.top) {
+        var script = document.createElement('script');
+        script.defer = true;
+        script.src = '/_vercel/insights/script.js';
+        document.head.appendChild(script);
+      }
+    </script>
   </body>
 </html>
