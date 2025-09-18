@@ -1,40 +1,54 @@
 class HTMLRenderer {
   constructor() {
-    this.renderFrame = document.getElementById("render-frame");
-    this.htmlContent = "";
-    this.cssContent = "";
-    this.jsContent = "";
+    this.renderFrame = document.getElementById('render-frame');
+    this.htmlContent = '';
+    this.cssContent = '';
+    this.jsContent = '';
     this.customStyles = [];
     this.customScripts = [];
-    this.lastRenderedContent = ""; // Track last rendered content to prevent unnecessary updates
+    this.lastRenderedContent = ''; // Track last rendered content to prevent unnecessary updates
 
     this.setupRenderFrame();
   }
 
   setupRenderFrame() {
+    // Set initial background to match theme
+    const isDarkTheme = document.body.classList.contains('dark-theme');
+    this.renderFrame.style.backgroundColor = isDarkTheme
+      ? '#161b22'
+      : '#ffffff';
     this.updateFrame();
   }
 
   buildCompleteDocument() {
+    // Get current theme for proper background color
+    const isDarkTheme = document.body.classList.contains('dark-theme');
+    const bgColor = isDarkTheme ? '#161b22' : '#ffffff';
+    const textColor = isDarkTheme ? '#e6edf3' : '#333333';
+
     // Combine all CSS (built-in + custom + user CSS)
     const allStyles = `
             /* Base styles for better rendering */
-            body {
+           body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 margin: 20px;
+                padding: 0px;
+       
                 line-height: 1.6;
-                color: #333;
+                color: ${textColor};
+                background-color: ${bgColor};
+               
             }
             * {
                 box-sizing: border-box;
             }
-            ${this.customStyles.join("\n")}
+            ${this.customStyles.join('\n')}
             ${this.cssContent}
         `;
 
     // Combine all JavaScript
     const allScripts = `
-            ${this.customScripts.join("\n")}
+            ${this.customScripts.join('\n')}
             ${this.jsContent}
         `;
 
@@ -53,7 +67,7 @@ class HTMLRenderer {
 <body>
     ${
       this.htmlContent ||
-      "<p><em>No HTML content yet. Switch to HTML mode and add some content!</em></p>"
+      '<p><em>No HTML content yet. Switch to HTML mode and add some content!</em></p>'
     }
     <script>
         try {
@@ -83,9 +97,13 @@ class HTMLRenderer {
 
     // Only update if content has actually changed to prevent flashing
     if (completeDocument !== this.lastRenderedContent) {
+      // Use data URL to prevent white flash that occurs with srcdoc
+      const dataUrl =
+        'data:text/html;charset=utf-8,' + encodeURIComponent(completeDocument);
+
       // Use requestAnimationFrame for smoother updates
       requestAnimationFrame(() => {
-        this.renderFrame.srcdoc = completeDocument;
+        this.renderFrame.src = dataUrl;
         this.lastRenderedContent = completeDocument;
       });
     }
@@ -107,7 +125,7 @@ class HTMLRenderer {
   }
 
   addCSS(css) {
-    this.cssContent += "\n" + css;
+    this.cssContent += '\n' + css;
     this.updateFrame();
   }
 
@@ -117,7 +135,7 @@ class HTMLRenderer {
   }
 
   addJS(js) {
-    this.jsContent += "\n" + js;
+    this.jsContent += '\n' + js;
     this.updateFrame();
   }
 
@@ -132,12 +150,12 @@ class HTMLRenderer {
 
   clear() {
     // Clear all content silently
-    this.htmlContent = "";
-    this.cssContent = "";
-    this.jsContent = "";
+    this.htmlContent = '';
+    this.cssContent = '';
+    this.jsContent = '';
     this.customStyles = [];
     this.customScripts = [];
-    this.lastRenderedContent = ""; // Reset tracked content
+    this.lastRenderedContent = ''; // Reset tracked content
     this.updateFrame();
   }
 
@@ -153,7 +171,7 @@ class HTMLRenderer {
   }
 
   // Helper methods for common HTML operations
-  createElement(tag, content = "", attributes = {}) {
+  createElement(tag, content = '', attributes = {}) {
     let html = `<${tag}`;
 
     // Add attributes
@@ -171,35 +189,35 @@ class HTMLRenderer {
 
     // Add headers if provided
     if (headers) {
-      html += "<thead><tr>";
+      html += '<thead><tr>';
       headers.forEach((header) => {
         html += `<th style="padding: 8px; background-color: #f5f5f5;">${header}</th>`;
       });
-      html += "</tr></thead>";
+      html += '</tr></thead>';
     }
 
     // Add data rows
-    html += "<tbody>";
+    html += '<tbody>';
     data.forEach((row) => {
-      html += "<tr>";
+      html += '<tr>';
       if (Array.isArray(row)) {
         row.forEach((cell) => {
           html += `<td style="padding: 8px; border: 1px solid #ddd;">${cell}</td>`;
         });
-      } else if (typeof row === "object") {
+      } else if (typeof row === 'object') {
         Object.values(row).forEach((cell) => {
           html += `<td style="padding: 8px; border: 1px solid #ddd;">${cell}</td>`;
         });
       }
-      html += "</tr>";
+      html += '</tr>';
     });
-    html += "</tbody></table>";
+    html += '</tbody></table>';
 
     return html;
   }
 
   createList(items, ordered = false) {
-    const tag = ordered ? "ol" : "ul";
+    const tag = ordered ? 'ol' : 'ul';
     let html = `<${tag}>`;
 
     items.forEach((item) => {
@@ -213,29 +231,29 @@ class HTMLRenderer {
   // Method to handle special render commands from console
   handleRenderCommand(command, data) {
     switch (command) {
-      case "html":
+      case 'html':
         this.setHTML(data);
         break;
-      case "text":
+      case 'text':
         this.setHTML(`<p>${data}</p>`);
         break;
-      case "table":
+      case 'table':
         if (Array.isArray(data)) {
           const tableHTML = this.createTable(data);
           this.setHTML(tableHTML);
         }
         break;
-      case "list":
+      case 'list':
         if (Array.isArray(data)) {
           const listHTML = this.createList(data);
           this.setHTML(listHTML);
         }
         break;
-      case "clear":
+      case 'clear':
         this.clear();
         break;
       default:
-        console.warn("Unknown render command:", command);
+        console.warn('Unknown render command:', command);
     }
   }
 }

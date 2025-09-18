@@ -35,6 +35,27 @@
       href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
+    <!-- Coding Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/styles.css" />
     <link
       rel="stylesheet"
@@ -45,7 +66,7 @@
   <body>
     <div class="app-container">
       <header class="app-header">
-        <h1>Console</h1>
+        <h1>JS Console | JSFormatter.net</h1>
         <div class="header-controls">
           <button
             id="emergency-stop"
@@ -179,44 +200,44 @@
     <script>
       require.config({
         paths: {
-          vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs",
+          vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs',
         },
       });
     </script>
 
     <!-- Initialize Lucide Icons -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener('DOMContentLoaded', function () {
         // Check if Lucide is available
-        if (typeof lucide !== "undefined" && lucide.createIcons) {
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
           lucide.createIcons();
         } else {
           // Fallback: replace icon elements with text
-          const icons = document.querySelectorAll("[data-lucide]");
+          const icons = document.querySelectorAll('[data-lucide]');
           icons.forEach((icon) => {
-            const iconName = icon.getAttribute("data-lucide");
+            const iconName = icon.getAttribute('data-lucide');
             const fallbackText = {
-              moon: "🌙",
-              sun: "☀️",
-              "octagon-x": "⛔",
-              zap: "⚡",
-              code: "📝",
-              palette: "🎨",
-              play: "▶️",
-              "refresh-cw": "🔄",
-              "align-left": "📐",
-              terminal: "💻",
-              monitor: "🖥️",
-              "trash-2": "🗑️",
-              eraser: "🧹",
+              moon: '🌙',
+              sun: '☀️',
+              'octagon-x': '⛔',
+              zap: '⚡',
+              code: '📝',
+              palette: '🎨',
+              play: '▶️',
+              'refresh-cw': '🔄',
+              'align-left': '📐',
+              terminal: '💻',
+              monitor: '🖥️',
+              'trash-2': '🗑️',
+              eraser: '🧹',
             };
-            icon.textContent = fallbackText[iconName] || "●";
+            icon.textContent = fallbackText[iconName] || '●';
           });
         }
 
         // Also listen for app initialization to update theme icon
-        document.addEventListener("appInitialized", function () {
-          if (typeof lucide !== "undefined" && lucide.createIcons) {
+        document.addEventListener('appInitialized', function () {
+          if (typeof lucide !== 'undefined' && lucide.createIcons) {
             lucide.createIcons();
           }
         });
@@ -225,5 +246,14 @@
 
     <!-- Application Scripts -->
     <script type="module" src="js/main.js"></script>
+
+    <script>
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
   </body>
 </html>
