@@ -42,6 +42,26 @@ class HTMLRenderer {
             * {
                 box-sizing: border-box;
             }
+            
+            /* Unified scrollbar styling to match main app */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            
+            ::-webkit-scrollbar-track {
+                background: ${isDarkTheme ? '#2d2d30' : '#f1f1f1'};
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                background: ${isDarkTheme ? '#555' : '#c1c1c1'};
+                border-radius: 4px;
+            }
+            
+            ::-webkit-scrollbar-thumb:hover {
+                background: ${isDarkTheme ? '#666' : '#a8a8a8'};
+            }
+            
             ${this.customStyles.join('\n')}
             ${this.cssContent}
         `;

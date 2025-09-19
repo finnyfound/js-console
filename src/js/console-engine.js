@@ -481,7 +481,50 @@ JS Console Commands:
       // Handle while loops - add safety check after opening brace
       .replace(/(while\s*\([^)]*\)\s*\{)/gi, '$1 __checkLoop();')
       // Handle do-while loops - add safety check after opening brace
-      .replace(/(do\s*\{)/gi, '$1 __checkLoop();');
+      .replace(/(do\s*\{)/gi, '$1 __checkLoop();')
+      // Handle for...in loops - add safety check after opening brace
+      .replace(/(for\s*\(\s*\w+\s+in\s+[^)]+\)\s*\{)/gi, '$1 __checkLoop();')
+      // Handle for...of loops - add safety check after opening brace
+      .replace(/(for\s*\(\s*\w+\s+of\s+[^)]+\)\s*\{)/gi, '$1 __checkLoop();')
+      // Handle Array.forEach and similar methods - inject check at start of callback
+      .replace(
+        /\.forEach\s*\(\s*function\s*\([^)]*\)\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      .replace(
+        /\.forEach\s*\(\s*\([^)]*\)\s*=>\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      .replace(
+        /\.forEach\s*\(\s*\w+\s*=>\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      // Handle Array.map, filter, reduce, etc.
+      .replace(
+        /\.(map|filter|reduce|some|every|find|findIndex)\s*\(\s*function\s*\([^)]*\)\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      .replace(
+        /\.(map|filter|reduce|some|every|find|findIndex)\s*\(\s*\([^)]*\)\s*=>\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      .replace(
+        /\.(map|filter|reduce|some|every|find|findIndex)\s*\(\s*\w+\s*=>\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      // Handle Object.keys().forEach, Object.values().forEach, Object.entries().forEach
+      .replace(
+        /Object\.(keys|values|entries)\([^)]*\)\.forEach\s*\(\s*function\s*\([^)]*\)\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      .replace(
+        /Object\.(keys|values|entries)\([^)]*\)\.forEach\s*\(\s*\([^)]*\)\s*=>\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      )
+      .replace(
+        /Object\.(keys|values|entries)\([^)]*\)\.forEach\s*\(\s*\w+\s*=>\s*\{/gi,
+        (match) => match + ' __checkLoop();'
+      );
 
     return safetyPrefix + safeCode;
   }

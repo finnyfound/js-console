@@ -305,6 +305,16 @@ body.dark-theme {
   background-color: #fd7e14;
   border-color: #fd7e14;
   color: #fff;
+  /* Override icon-btn constraints for text + icon */
+  width: auto;
+  min-width: 28px;
+  padding: 6px 12px;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 #format-code:hover {
@@ -411,6 +421,16 @@ body.dark-theme {
   background-color: #fb8500;
   border-color: #fb8500;
   color: #fff;
+  /* Maintain the same overrides for dark theme */
+  width: auto;
+  min-width: 28px;
+  padding: 6px 12px;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .dark-theme #format-code:hover {
@@ -688,6 +708,11 @@ body.dark-theme {
   background-color: transparent;
   border-left: none;
   color: #0366d6;
+  /* Override parent .console-log height constraints for individual entries */
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  flex: none !important;
 }
 
 /* Console content and styling */
@@ -857,19 +882,24 @@ body.dark-theme {
 
   /* Enable scrolling for mobile console */
   .output-panel {
-    overflow-y: auto;
     max-height: calc(100vh - 150px); /* Reduced offset for better fit */
+    overflow: hidden; /* Remove outer scroll to prevent nested scrollbars */
   }
 
   .console-content {
-    overflow-y: auto;
     max-height: 100%;
     height: 100%;
+    overflow: hidden; /* Remove middle scroll layer */
   }
 
   .console-log {
     overflow-y: auto;
-    max-height: calc(100vh - 200px); /* Adjusted for better mobile fit */
+    max-height: calc(
+      100vh - 480px
+    ); /* Adjusted: accounts for all UI elements properly */
+    height: calc(
+      100vh - 480px
+    ); /* Fixed height to contain scrollbar properly */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     margin-bottom: 0;
   }
