@@ -46,8 +46,36 @@ class HTMLRenderer {
             ${this.cssContent}
         `;
 
-    // Combine all JavaScript
+    // Combine all JavaScript with console overrides
     const allScripts = `
+            // Inject console overrides to capture output from iframe
+            (function() {
+                if (window.parent && window.parent.consoleEngine) {
+                    const engine = window.parent.consoleEngine;
+                    
+                    // Override console methods to send output to parent console
+                    console.log = (...args) => {
+                        engine.addOutput('log', args);
+                        engine.originalConsole.log(...args);
+                    };
+                    
+                    console.error = (...args) => {
+                        engine.addOutput('error', args);
+                        engine.originalConsole.error(...args);
+                    };
+                    
+                    console.warn = (...args) => {
+                        engine.addOutput('warn', args);
+                        engine.originalConsole.warn(...args);
+                    };
+                    
+                    console.info = (...args) => {
+                        engine.addOutput('info', args);
+                        engine.originalConsole.info(...args);
+                    };
+                }
+            })();
+            
             ${this.customScripts.join('\n')}
             ${this.jsContent}
         `;

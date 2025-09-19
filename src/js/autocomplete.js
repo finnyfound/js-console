@@ -2,224 +2,224 @@ class AutocompleteManager {
   constructor(inputElement, engine) {
     this.input = inputElement;
     this.engine = engine;
-    this.dropdown = document.getElementById("autocomplete-dropdown");
+    this.dropdown = document.getElementById('autocomplete-dropdown');
     this.isVisible = false;
     this.selectedIndex = -1;
     this.items = [];
-    this.currentLanguage = "javascript"; // Default language
+    this.currentLanguage = 'javascript'; // Default language
 
     // JavaScript suggestions
     this.jsKeywords = [
-      "break",
-      "case",
-      "catch",
-      "class",
-      "const",
-      "continue",
-      "debugger",
-      "default",
-      "delete",
-      "do",
-      "else",
-      "enum",
-      "export",
-      "extends",
-      "false",
-      "finally",
-      "for",
-      "function",
-      "if",
-      "import",
-      "in",
-      "instanceof",
-      "new",
-      "null",
-      "return",
-      "super",
-      "switch",
-      "this",
-      "throw",
-      "true",
-      "try",
-      "typeof",
-      "undefined",
-      "var",
-      "void",
-      "while",
-      "with",
-      "yield",
-      "let",
-      "async",
-      "await",
+      'break',
+      'case',
+      'catch',
+      'class',
+      'const',
+      'continue',
+      'debugger',
+      'default',
+      'delete',
+      'do',
+      'else',
+      'enum',
+      'export',
+      'extends',
+      'false',
+      'finally',
+      'for',
+      'function',
+      'if',
+      'import',
+      'in',
+      'instanceof',
+      'new',
+      'null',
+      'return',
+      'super',
+      'switch',
+      'this',
+      'throw',
+      'true',
+      'try',
+      'typeof',
+      'undefined',
+      'var',
+      'void',
+      'while',
+      'with',
+      'yield',
+      'let',
+      'async',
+      'await',
     ];
 
     this.jsMethods = [
-      "forEach",
-      "map",
-      "filter",
-      "reduce",
-      "find",
-      "findIndex",
-      "indexOf",
-      "includes",
-      "slice",
-      "splice",
-      "push",
-      "pop",
-      "shift",
-      "unshift",
-      "join",
-      "split",
-      "replace",
-      "match",
-      "search",
-      "toLowerCase",
-      "toUpperCase",
-      "trim",
-      "substring",
-      "charAt",
-      "charCodeAt",
-      "toString",
-      "valueOf",
-      "hasOwnProperty",
-      "keys",
-      "values",
-      "entries",
-      "assign",
-      "create",
-      "defineProperty",
+      'forEach',
+      'map',
+      'filter',
+      'reduce',
+      'find',
+      'findIndex',
+      'indexOf',
+      'includes',
+      'slice',
+      'splice',
+      'push',
+      'pop',
+      'shift',
+      'unshift',
+      'join',
+      'split',
+      'replace',
+      'match',
+      'search',
+      'toLowerCase',
+      'toUpperCase',
+      'trim',
+      'substring',
+      'charAt',
+      'charCodeAt',
+      'toString',
+      'valueOf',
+      'hasOwnProperty',
+      'keys',
+      'values',
+      'entries',
+      'assign',
+      'create',
+      'defineProperty',
     ];
 
     // HTML suggestions
     this.htmlTags = [
-      "div",
-      "span",
-      "p",
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6",
-      "a",
-      "img",
-      "ul",
-      "ol",
-      "li",
-      "table",
-      "tr",
-      "td",
-      "th",
-      "form",
-      "input",
-      "button",
-      "textarea",
-      "select",
-      "option",
-      "header",
-      "footer",
-      "nav",
-      "main",
-      "section",
-      "article",
-      "aside",
-      "figure",
-      "figcaption",
-      "blockquote",
-      "pre",
-      "code",
+      'div',
+      'span',
+      'p',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'a',
+      'img',
+      'ul',
+      'ol',
+      'li',
+      'table',
+      'tr',
+      'td',
+      'th',
+      'form',
+      'input',
+      'button',
+      'textarea',
+      'select',
+      'option',
+      'header',
+      'footer',
+      'nav',
+      'main',
+      'section',
+      'article',
+      'aside',
+      'figure',
+      'figcaption',
+      'blockquote',
+      'pre',
+      'code',
     ];
 
     this.htmlAttributes = [
-      "id",
-      "class",
-      "style",
-      "src",
-      "href",
-      "alt",
-      "title",
-      "type",
-      "name",
-      "value",
-      "placeholder",
-      "disabled",
-      "readonly",
-      "required",
-      "checked",
-      "selected",
-      "multiple",
-      "data-*",
+      'id',
+      'class',
+      'style',
+      'src',
+      'href',
+      'alt',
+      'title',
+      'type',
+      'name',
+      'value',
+      'placeholder',
+      'disabled',
+      'readonly',
+      'required',
+      'checked',
+      'selected',
+      'multiple',
+      'data-*',
     ];
 
     // CSS suggestions
     this.cssProperties = [
-      "color",
-      "background-color",
-      "font-size",
-      "font-family",
-      "font-weight",
-      "text-align",
-      "text-decoration",
-      "line-height",
-      "letter-spacing",
-      "margin",
-      "margin-top",
-      "margin-right",
-      "margin-bottom",
-      "margin-left",
-      "padding",
-      "padding-top",
-      "padding-right",
-      "padding-bottom",
-      "padding-left",
-      "border",
-      "border-width",
-      "border-style",
-      "border-color",
-      "border-radius",
-      "width",
-      "height",
-      "min-width",
-      "max-width",
-      "min-height",
-      "max-height",
-      "display",
-      "position",
-      "top",
-      "right",
-      "bottom",
-      "left",
-      "z-index",
-      "float",
-      "clear",
-      "overflow",
-      "visibility",
-      "opacity",
-      "cursor",
+      'color',
+      'background-color',
+      'font-size',
+      'font-family',
+      'font-weight',
+      'text-align',
+      'text-decoration',
+      'line-height',
+      'letter-spacing',
+      'margin',
+      'margin-top',
+      'margin-right',
+      'margin-bottom',
+      'margin-left',
+      'padding',
+      'padding-top',
+      'padding-right',
+      'padding-bottom',
+      'padding-left',
+      'border',
+      'border-width',
+      'border-style',
+      'border-color',
+      'border-radius',
+      'width',
+      'height',
+      'min-width',
+      'max-width',
+      'min-height',
+      'max-height',
+      'display',
+      'position',
+      'top',
+      'right',
+      'bottom',
+      'left',
+      'z-index',
+      'float',
+      'clear',
+      'overflow',
+      'visibility',
+      'opacity',
+      'cursor',
     ];
 
     this.cssValues = [
-      "auto",
-      "inherit",
-      "initial",
-      "none",
-      "block",
-      "inline",
-      "inline-block",
-      "flex",
-      "grid",
-      "absolute",
-      "relative",
-      "fixed",
-      "static",
-      "sticky",
-      "left",
-      "right",
-      "center",
-      "justify",
-      "bold",
-      "normal",
-      "italic",
+      'auto',
+      'inherit',
+      'initial',
+      'none',
+      'block',
+      'inline',
+      'inline-block',
+      'flex',
+      'grid',
+      'absolute',
+      'relative',
+      'fixed',
+      'static',
+      'sticky',
+      'left',
+      'right',
+      'center',
+      'justify',
+      'bold',
+      'normal',
+      'italic',
     ];
 
     this.setupEventListeners();
@@ -230,20 +230,20 @@ class AutocompleteManager {
   }
 
   setupEventListeners() {
-    this.input.addEventListener("input", (e) => {
+    this.input.addEventListener('input', (e) => {
       this.handleInput(e);
     });
 
-    this.input.addEventListener("keydown", (e) => {
+    this.input.addEventListener('keydown', (e) => {
       this.handleKeydown(e);
     });
 
-    this.input.addEventListener("blur", () => {
+    this.input.addEventListener('blur', () => {
       // Hide dropdown after a short delay to allow clicking
       setTimeout(() => this.hide(), 150);
     });
 
-    document.addEventListener("click", (e) => {
+    document.addEventListener('click', (e) => {
       if (!this.dropdown.contains(e.target) && e.target !== this.input) {
         this.hide();
       }
@@ -269,7 +269,7 @@ class AutocompleteManager {
 
   handleKeydown(e) {
     if (!this.isVisible) {
-      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         // Show history navigation or autocomplete
         return;
       }
@@ -277,7 +277,7 @@ class AutocompleteManager {
     }
 
     switch (e.key) {
-      case "ArrowDown":
+      case 'ArrowDown':
         e.preventDefault();
         this.selectedIndex = Math.min(
           this.selectedIndex + 1,
@@ -286,21 +286,21 @@ class AutocompleteManager {
         this.updateSelection();
         break;
 
-      case "ArrowUp":
+      case 'ArrowUp':
         e.preventDefault();
         this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
         this.updateSelection();
         break;
 
-      case "Tab":
-      case "Enter":
+      case 'Tab':
+      case 'Enter':
         e.preventDefault();
         if (this.selectedIndex >= 0) {
           this.selectItem(this.items[this.selectedIndex]);
         }
         break;
 
-      case "Escape":
+      case 'Escape':
         this.hide();
         break;
     }
@@ -326,11 +326,11 @@ class AutocompleteManager {
     const lowerQuery = query.toLowerCase();
 
     // Get language-specific suggestions
-    if (this.currentLanguage === "javascript") {
+    if (this.currentLanguage === 'javascript') {
       this.getJavaScriptSuggestions(suggestions, lowerQuery, query);
-    } else if (this.currentLanguage === "html") {
+    } else if (this.currentLanguage === 'html') {
       this.getHTMLSuggestions(suggestions, lowerQuery, query);
-    } else if (this.currentLanguage === "css") {
+    } else if (this.currentLanguage === 'css') {
       this.getCSSSuggestions(suggestions, lowerQuery, query);
     }
 
@@ -357,8 +357,8 @@ class AutocompleteManager {
       if (keyword.toLowerCase().startsWith(lowerQuery)) {
         suggestions.push({
           label: keyword,
-          kind: "keyword",
-          detail: "JS Keyword",
+          kind: 'keyword',
+          detail: 'JS Keyword',
           score: this.calculateScore(keyword, query),
         });
       }
@@ -369,8 +369,8 @@ class AutocompleteManager {
       if (method.toLowerCase().startsWith(lowerQuery)) {
         suggestions.push({
           label: method,
-          kind: "method",
-          detail: "JS Method",
+          kind: 'method',
+          detail: 'JS Method',
           score: this.calculateScore(method, query),
         });
       }
@@ -383,8 +383,8 @@ class AutocompleteManager {
       if (tag.toLowerCase().startsWith(lowerQuery)) {
         suggestions.push({
           label: tag,
-          kind: "tag",
-          detail: "HTML Tag",
+          kind: 'tag',
+          detail: 'HTML Tag',
           score: this.calculateScore(tag, query),
         });
       }
@@ -395,8 +395,8 @@ class AutocompleteManager {
       if (attr.toLowerCase().startsWith(lowerQuery)) {
         suggestions.push({
           label: attr,
-          kind: "attribute",
-          detail: "HTML Attribute",
+          kind: 'attribute',
+          detail: 'HTML Attribute',
           score: this.calculateScore(attr, query),
         });
       }
@@ -409,8 +409,8 @@ class AutocompleteManager {
       if (prop.toLowerCase().startsWith(lowerQuery)) {
         suggestions.push({
           label: prop,
-          kind: "property",
-          detail: "CSS Property",
+          kind: 'property',
+          detail: 'CSS Property',
           score: this.calculateScore(prop, query),
         });
       }
@@ -421,8 +421,8 @@ class AutocompleteManager {
       if (value.toLowerCase().startsWith(lowerQuery)) {
         suggestions.push({
           label: value,
-          kind: "value",
-          detail: "CSS Value",
+          kind: 'value',
+          detail: 'CSS Value',
           score: this.calculateScore(value, query),
         });
       }
@@ -450,25 +450,25 @@ class AutocompleteManager {
   }
 
   render(suggestions) {
-    this.dropdown.innerHTML = "";
+    this.dropdown.innerHTML = '';
 
     suggestions.forEach((suggestion, index) => {
-      const item = document.createElement("div");
-      item.className = "autocomplete-item";
+      const item = document.createElement('div');
+      item.className = 'autocomplete-item';
       item.dataset.index = index;
 
-      const label = document.createElement("span");
-      label.className = "autocomplete-label";
+      const label = document.createElement('span');
+      label.className = 'autocomplete-label';
       label.textContent = suggestion.label;
 
-      const detail = document.createElement("span");
+      const detail = document.createElement('span');
       detail.className = `autocomplete-detail autocomplete-${suggestion.kind}`;
       detail.textContent = suggestion.detail;
 
       item.appendChild(label);
       item.appendChild(detail);
 
-      item.addEventListener("click", () => {
+      item.addEventListener('click', () => {
         this.selectItem(suggestion);
       });
 
@@ -499,29 +499,29 @@ class AutocompleteManager {
   }
 
   updateSelection() {
-    const items = this.dropdown.querySelectorAll(".autocomplete-item");
+    const items = this.dropdown.querySelectorAll('.autocomplete-item');
     items.forEach((item, index) => {
-      item.classList.toggle("selected", index === this.selectedIndex);
+      item.classList.toggle('selected', index === this.selectedIndex);
     });
   }
 
   show() {
-    this.dropdown.style.display = "block";
+    this.dropdown.style.display = 'block';
     this.isVisible = true;
     this.positionDropdown();
   }
 
   hide() {
-    this.dropdown.style.display = "none";
+    this.dropdown.style.display = 'none';
     this.isVisible = false;
     this.selectedIndex = -1;
   }
 
   positionDropdown() {
     const inputRect = this.input.getBoundingClientRect();
-    this.dropdown.style.top = inputRect.bottom + window.scrollY + "px";
-    this.dropdown.style.left = inputRect.left + "px";
-    this.dropdown.style.minWidth = inputRect.width + "px";
+    this.dropdown.style.top = inputRect.bottom + window.scrollY + 'px';
+    this.dropdown.style.left = inputRect.left + 'px';
+    this.dropdown.style.minWidth = inputRect.width + 'px';
   }
 }
 

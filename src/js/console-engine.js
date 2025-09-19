@@ -27,22 +27,22 @@ class ConsoleEngine {
 
     // Override console methods to capture output
     console.log = (...args) => {
-      engine.addOutput("log", args);
+      engine.addOutput('log', args);
       engine.originalConsole.log(...args);
     };
 
     console.error = (...args) => {
-      engine.addOutput("error", args);
+      engine.addOutput('error', args);
       engine.originalConsole.error(...args);
     };
 
     console.warn = (...args) => {
-      engine.addOutput("warn", args);
+      engine.addOutput('warn', args);
       engine.originalConsole.warn(...args);
     };
 
     console.info = (...args) => {
-      engine.addOutput("info", args);
+      engine.addOutput('info', args);
       engine.originalConsole.info(...args);
     };
   }
@@ -68,15 +68,15 @@ JS Console Commands:
     };
 
     this.context.vars = () => {
-      console.log("Variables:", Object.fromEntries(this.variables));
+      console.log('Variables:', Object.fromEntries(this.variables));
     };
 
     this.context.funcs = () => {
-      console.log("Functions:", Array.from(this.functions.keys()));
+      console.log('Functions:', Array.from(this.functions.keys()));
     };
 
     this.context.history = () => {
-      console.log("Command History:", this.commandHistory);
+      console.log('Command History:', this.commandHistory);
     };
 
     // Simple jQuery-like selector
@@ -121,21 +121,21 @@ JS Console Commands:
   }
 
   formatValue(value) {
-    if (value === null) return "null";
-    if (value === undefined) return "undefined";
-    if (typeof value === "string") return value;
-    if (typeof value === "function") return value.toString();
-    if (typeof value === "object") {
+    if (value === null) return 'null';
+    if (value === undefined) return 'undefined';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'function') return value.toString();
+    if (typeof value === 'object') {
       try {
         return JSON.stringify(value, null, 2);
       } catch (e) {
-        return "[Object with circular reference]";
+        return '[Object with circular reference]';
       }
     }
     return String(value);
   }
 
-  execute(code, showCommand = true, language = "javascript") {
+  execute(code, showCommand = true, language = 'javascript') {
     if (!code.trim()) return;
 
     this.commandHistory.push(code);
@@ -143,16 +143,16 @@ JS Console Commands:
 
     // Only add command to output if showCommand is true (for console input)
     if (showCommand) {
-      this.addOutput("command", [code]);
+      this.addOutput('command', [code]);
     }
 
     try {
       const startTime = performance.now();
 
       // Handle different languages
-      if (language === "html") {
+      if (language === 'html') {
         this.executeHTML(code);
-      } else if (language === "css") {
+      } else if (language === 'css') {
         this.executeCSS(code);
       } else {
         // JavaScript execution (original logic)
@@ -165,8 +165,15 @@ JS Console Commands:
       // Update execution time in status
       this.updateExecutionTime(executionTime);
     } catch (error) {
-      this.addOutput("error", [error.message]);
+      // Enhanced error display with detailed information
+      this.displayDetailedError(error);
     }
+  }
+
+  displayDetailedError(error) {
+    // Simple, clean error display - just show the error message
+    const errorMessage = `${error.name}: ${error.message}`;
+    this.addOutput('error', [errorMessage]);
   }
 
   // New method to clear the rendered page and start fresh
@@ -188,70 +195,79 @@ JS Console Commands:
   }
 
   executeJavaScript(code) {
-    // Check for potential infinite loops and add safety
-    if (this.hasInfiniteLoopRisk(code)) {
-      this.addOutput("warn", [
-        "⚠️ Potential infinite loops detected. Adding safety measures...",
-      ]);
-      code = this.addLoopSafety(code);
-    }
+    // Add comprehensive loop safety protection
+    const safeCode = this.addComprehensiveLoopSafety(code);
 
     // Make sure document is available in context
     this.context.document = document;
     this.context.window = window;
 
     try {
-      // Simple synchronous execution with basic safety
-      const func = new Function(...Object.keys(this.context), code);
+      // Execute with timeout protection
+      const startTime = Date.now();
+      const maxExecutionTime = 5000; // 5 seconds max
+
+      // Simple synchronous execution with timeout check
+      const func = new Function(...Object.keys(this.context), safeCode);
       const result = func(...Object.values(this.context));
 
-      // Extract variables and functions from executed code
-      this.extractDefinitions(code);
-
-      // Show result if it's not undefined
-      if (result !== undefined) {
-        this.addOutput("result", [result]);
+      // Check if execution took too long
+      if (Date.now() - startTime > maxExecutionTime) {
+        throw new Error('🛑 Execution timeout: Code took too long to execute');
       }
+
+      return result;
     } catch (error) {
-      this.addOutput("error", [error.message]);
-      throw error; // Re-throw so caller can handle
+      throw error;
     }
   }
 
   executeHTML(code) {
-    // Render HTML to the HTML output panel
-    if (window.htmlRenderer) {
-      window.htmlRenderer.setHTML(code);
-      // HTML/CSS should only update the renderer, not console
-    } else {
-      this.addOutput("error", ["HTML renderer not available"]);
+    try {
+      // Render HTML to the HTML output panel
+      if (window.htmlRenderer) {
+        window.htmlRenderer.setHTML(code);
+        // HTML/CSS should only update the renderer, not console
+      } else {
+        this.addOutput('error', ['HTML renderer not available']);
+      }
+    } catch (error) {
+      this.addOutput('error', [`HTML Error: ${error.message}`]);
     }
   }
 
   executeCSS(code) {
-    // Apply CSS styles to the HTML output
-    if (window.htmlRenderer) {
-      window.htmlRenderer.setCSS(code);
-      // HTML/CSS should only update the renderer, not console
-    } else {
-      // Fallback: create a style element
-      this.applyCSSToPage(code);
-      this.addOutput("info", ["CSS applied to page"]);
+    try {
+      // Apply CSS styles to the HTML output
+      if (window.htmlRenderer) {
+        window.htmlRenderer.setCSS(code);
+        // HTML/CSS should only update the renderer, not console
+      } else {
+        // Fallback: create a style element
+        this.applyCSSToPage(code);
+        this.addOutput('info', ['CSS applied to page']);
+      }
+    } catch (error) {
+      this.addOutput('error', [`CSS Error: ${error.message}`]);
     }
   }
 
   applyCSSToPage(css) {
-    // Remove any existing dynamic CSS
-    const existingStyle = document.getElementById("dynamic-css");
-    if (existingStyle) {
-      existingStyle.remove();
-    }
+    try {
+      // Remove any existing dynamic CSS
+      const existingStyle = document.getElementById('dynamic-css');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
 
-    // Create new style element
-    const styleElement = document.createElement("style");
-    styleElement.id = "dynamic-css";
-    styleElement.textContent = css;
-    document.head.appendChild(styleElement);
+      // Create new style element
+      const styleElement = document.createElement('style');
+      styleElement.id = 'dynamic-css';
+      styleElement.textContent = css;
+      document.head.appendChild(styleElement);
+    } catch (error) {
+      this.addOutput('error', [`CSS Application Error: ${error.message}`]);
+    }
   }
 
   extractDefinitions(code) {
@@ -265,17 +281,17 @@ JS Console Commands:
 
     // Extract variable declarations
     while ((match = varPattern.exec(code)) !== null) {
-      this.variables.set(match[1], "variable");
+      this.variables.set(match[1], 'variable');
     }
 
     // Extract function declarations
     while ((match = funcPattern.exec(code)) !== null) {
-      this.functions.set(match[1], "function");
+      this.functions.set(match[1], 'function');
     }
 
     // Extract arrow function assignments
     while ((match = arrowFuncPattern.exec(code)) !== null) {
-      this.functions.set(match[1], "arrow function");
+      this.functions.set(match[1], 'arrow function');
     }
   }
 
@@ -284,46 +300,46 @@ JS Console Commands:
 
     // JavaScript built-ins
     const builtins = [
-      "console",
-      "document",
-      "window",
-      "Array",
-      "Object",
-      "String",
-      "Number",
-      "Boolean",
-      "Date",
-      "Math",
-      "JSON",
-      "Promise",
-      "setTimeout",
-      "setInterval",
-      "clearTimeout",
-      "clearInterval",
-      "parseInt",
-      "parseFloat",
-      "isNaN",
-      "isFinite",
+      'console',
+      'document',
+      'window',
+      'Array',
+      'Object',
+      'String',
+      'Number',
+      'Boolean',
+      'Date',
+      'Math',
+      'JSON',
+      'Promise',
+      'setTimeout',
+      'setInterval',
+      'clearTimeout',
+      'clearInterval',
+      'parseInt',
+      'parseFloat',
+      'isNaN',
+      'isFinite',
     ];
 
     builtins.forEach((item) => {
-      items.push({ label: item, kind: "builtin", detail: "Built-in" });
+      items.push({ label: item, kind: 'builtin', detail: 'Built-in' });
     });
 
     // User-defined variables
     this.variables.forEach((type, name) => {
-      items.push({ label: name, kind: "variable", detail: "Variable" });
+      items.push({ label: name, kind: 'variable', detail: 'Variable' });
     });
 
     // User-defined functions
     this.functions.forEach((type, name) => {
-      items.push({ label: name, kind: "function", detail: "Function" });
+      items.push({ label: name, kind: 'function', detail: 'Function' });
     });
 
     // Context functions
     Object.keys(this.context).forEach((key) => {
-      if (typeof this.context[key] === "function") {
-        items.push({ label: key, kind: "method", detail: "Method" });
+      if (typeof this.context[key] === 'function') {
+        items.push({ label: key, kind: 'method', detail: 'Method' });
       }
     });
 
@@ -336,22 +352,22 @@ JS Console Commands:
   }
 
   updateConsoleDisplay() {
-    const consoleLog = document.getElementById("console-log");
+    const consoleLog = document.getElementById('console-log');
     if (!consoleLog) return;
 
-    consoleLog.innerHTML = "";
+    consoleLog.innerHTML = '';
 
     this.output.forEach((item) => {
-      const logEntry = document.createElement("div");
+      const logEntry = document.createElement('div');
       logEntry.className = `console-entry console-${item.type}`;
 
       // Create prompt element
-      const prompt = document.createElement("span");
-      prompt.className = "console-prompt";
-      prompt.textContent = "> ";
+      const prompt = document.createElement('span');
+      prompt.className = 'console-prompt';
+      prompt.textContent = '> ';
 
-      const content = document.createElement("div");
-      content.className = "console-content";
+      const content = document.createElement('div');
+      content.className = 'console-content';
 
       // Handle multiple arguments properly - each on its own line if needed
       if (item.content.length === 1) {
@@ -360,15 +376,15 @@ JS Console Commands:
         // Multiple arguments - display them separated by spaces but preserve structure
         content.innerHTML = item.content
           .map((arg) => {
-            const span = document.createElement("span");
+            const span = document.createElement('span');
             span.textContent = arg;
             return span.outerHTML;
           })
-          .join(" ");
+          .join(' ');
       }
 
-      const entryContainer = document.createElement("div");
-      entryContainer.className = "console-entry-container";
+      const entryContainer = document.createElement('div');
+      entryContainer.className = 'console-entry-container';
       entryContainer.appendChild(prompt);
       entryContainer.appendChild(content);
 
@@ -381,11 +397,11 @@ JS Console Commands:
   }
 
   updateExecutionTime(time) {
-    const executionTimeEl = document.getElementById("execution-time");
+    const executionTimeEl = document.getElementById('execution-time');
     if (executionTimeEl) {
       executionTimeEl.textContent = `Executed in ${time}ms`;
       setTimeout(() => {
-        executionTimeEl.textContent = "";
+        executionTimeEl.textContent = '';
       }, 3000);
     }
   }
@@ -395,21 +411,21 @@ JS Console Commands:
   }
 
   navigateHistory(direction) {
-    if (direction === "up" && this.historyIndex > 0) {
+    if (direction === 'up' && this.historyIndex > 0) {
       this.historyIndex--;
       return this.commandHistory[this.historyIndex];
     } else if (
-      direction === "down" &&
+      direction === 'down' &&
       this.historyIndex < this.commandHistory.length - 1
     ) {
       this.historyIndex++;
       return this.commandHistory[this.historyIndex];
     } else if (
-      direction === "down" &&
+      direction === 'down' &&
       this.historyIndex === this.commandHistory.length - 1
     ) {
       this.historyIndex = this.commandHistory.length;
-      return "";
+      return '';
     }
     return null;
   }
@@ -421,34 +437,58 @@ JS Console Commands:
       /while\s*\(\s*1\s*\)/i, // while(1)
       /for\s*\(\s*;[^;]*;[^)]*\)\s*\{/i, // for(;;) or for(;condition;)
       /while\s*\(\s*[^)]*\)\s*\{(?![^}]*break)[^}]*\}/i, // while without break
+      /for\s*\([^;]*;[^;]*\+\+[^;]*;[^)]*\)/i, // for with increment that might not reach end
+      /for\s*\([^;]*;[^;]*--[^;]*;[^)]*\)/i, // for with decrement that might not reach end
     ];
 
     return dangerousPatterns.some((pattern) => pattern.test(code));
   }
 
-  addLoopSafety(code) {
-    const maxIterations = 5000; // Reduced for better safety
+  addComprehensiveLoopSafety(code) {
+    const maxIterations = 1500; // Maximum loop iterations (matching your example)
+    const maxTime = 3000; // Maximum execution time per loop in ms
 
-    // Add safety wrapper
-    const safeCode = `
-      (() => {
-        let __globalCounter = 0;
-        const __maxIterations = ${maxIterations};
-        const __checkLoop = () => {
-          if (++__globalCounter > __maxIterations) {
-            console.warn("🛑 Loop safety activated: Breaking after " + __maxIterations + " iterations");
-            throw new Error("Loop safety: Maximum iterations exceeded");
-          }
-        };
+    // Simple approach: inject safety checks into common loop patterns
+    let safeCode = code;
+
+    // Global safety variables
+    const safetyPrefix = `
+      let __globalCounter = 0;
+      let __loopStartTime = Date.now();
+      const __maxIterations = ${maxIterations};
+      const __maxTime = ${maxTime};
+      
+      const __checkLoop = () => {
+        __globalCounter++;
+        const currentTime = Date.now();
         
-        // Replace the original code with safety checks
-        ${code
-          .replace(/(while\s*\([^)]+\)\s*\{)/gi, "$1 __checkLoop();")
-          .replace(/(for\s*\([^)]*\)\s*\{)/gi, "$1 __checkLoop();")}
-      })();
+        if (__globalCounter > __maxIterations) {
+          const error = new RangeError("Potential infinite loop: exceeded " + __maxIterations + " iterations.");
+          throw error;
+        }
+        
+        if (currentTime - __loopStartTime > __maxTime) {
+          const error = new Error("Loop safety: Maximum execution time (" + __maxTime + "ms) exceeded. Loop is taking too long.");
+          throw error;
+        }
+      };
     `;
 
-    return safeCode;
+    // Inject safety checks into loops
+    safeCode = safeCode
+      // Handle for loops - add safety check after opening brace
+      .replace(/(for\s*\([^)]*\)\s*\{)/gi, '$1 __checkLoop();')
+      // Handle while loops - add safety check after opening brace
+      .replace(/(while\s*\([^)]*\)\s*\{)/gi, '$1 __checkLoop();')
+      // Handle do-while loops - add safety check after opening brace
+      .replace(/(do\s*\{)/gi, '$1 __checkLoop();');
+
+    return safetyPrefix + safeCode;
+  }
+
+  addLoopSafety(code) {
+    // Legacy method - now redirects to comprehensive version
+    return this.addComprehensiveLoopSafety(code);
   }
 }
 

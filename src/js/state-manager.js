@@ -4,31 +4,31 @@
  */
 class StateManager {
   // Schema version for state migration
-  static STATE_VERSION = "1.0.0";
+  static STATE_VERSION = '1.0.0';
 
   // Storage keys configuration
   static STORAGE_KEYS = {
-    appState: "js-console-app-state",
+    appState: 'js-console-app-state',
   };
 
   // Default state schema
   static DEFAULT_STATE = {
     version: StateManager.STATE_VERSION,
     preferences: {
-      theme: "dark",
+      theme: 'dark',
       autoRun: false,
-      language: "javascript",
+      language: 'javascript',
       fontSize: 14,
       minimap: false,
     },
     codeContent: {
       javascript:
         '// Enter JavaScript code here...\nconsole.log("Hello, World!");',
-      html: "<!-- Enter HTML code here... -->\n<div>\n  <h1>Hello, World!</h1>\n  <p>This is HTML content.</p>\n</div>",
-      css: "/* Enter CSS code here... */\nbody {\n  font-family: Arial, sans-serif;\n  background-color: #f0f0f0;\n}",
+      html: '<!-- Enter HTML code here... -->\n<div>\n  <h1>Hello, World!</h1>\n  <p>This is HTML content.</p>\n</div>',
+      css: '/* Enter CSS code here... */\nbody {\n  font-family: Arial, sans-serif;\n  background-color: #f0f0f0;\n}',
     },
     session: {
-      currentLanguage: "javascript",
+      currentLanguage: 'javascript',
       lastSaved: null,
       autoSaveEnabled: true,
     },
@@ -70,7 +70,7 @@ class StateManager {
       }
       return parsedState;
     } catch (error) {
-      console.error("Failed to load state:", error);
+      console.error('Failed to load state:', error);
       return this.createDefaultState();
     }
   }
@@ -86,18 +86,18 @@ class StateManager {
    * Validate state schema
    */
   validateState(state) {
-    if (!state || typeof state !== "object") return false;
+    if (!state || typeof state !== 'object') return false;
     if (!state.preferences || !state.codeContent || !state.session)
       return false;
 
     // Validate required preference keys
-    const requiredPrefs = ["theme", "autoRun", "language"];
+    const requiredPrefs = ['theme', 'autoRun', 'language'];
     for (const key of requiredPrefs) {
       if (!(key in state.preferences)) return false;
     }
 
     // Validate required code content keys
-    const requiredCode = ["javascript", "html", "css"];
+    const requiredCode = ['javascript', 'html', 'css'];
     for (const key of requiredCode) {
       if (!(key in state.codeContent)) return false;
     }
@@ -144,12 +144,12 @@ class StateManager {
           StateManager.STORAGE_KEYS.appState,
           JSON.stringify(this.state)
         );
-        this.notifySubscribers("state:saved", {
+        this.notifySubscribers('state:saved', {
           timestamp: this.state.session.lastSaved,
         });
       } catch (error) {
-        console.error("Failed to save state:", error);
-        this.notifySubscribers("state:error", { error: error.message });
+        console.error('Failed to save state:', error);
+        this.notifySubscribers('state:error', { error: error.message });
       }
     };
 
@@ -165,7 +165,7 @@ class StateManager {
    */
   setupAutoSave() {
     // Save state when page is about to unload
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener('beforeunload', () => {
       this.saveState(true);
     });
 
@@ -183,7 +183,7 @@ class StateManager {
   getState(path = null) {
     if (!path) return this.state;
 
-    return path.split(".").reduce((obj, key) => obj?.[key], this.state);
+    return path.split('.').reduce((obj, key) => obj?.[key], this.state);
   }
 
   /**
@@ -194,7 +194,7 @@ class StateManager {
 
     try {
       // Update nested state
-      const keys = path.split(".");
+      const keys = path.split('.');
       const lastKey = keys.pop();
       const target = keys.reduce((obj, key) => {
         if (!obj[key]) obj[key] = {};
@@ -214,7 +214,7 @@ class StateManager {
           value,
           oldValue,
         });
-        this.notifySubscribers("state:changed", {
+        this.notifySubscribers('state:changed', {
           path,
           value,
           oldValue,
@@ -223,7 +223,7 @@ class StateManager {
 
       return true;
     } catch (error) {
-      console.error("Failed to update state:", error);
+      console.error('Failed to update state:', error);
       return false;
     }
   }
@@ -238,7 +238,7 @@ class StateManager {
       const changes = [];
 
       for (const [path, value] of Object.entries(updates)) {
-        const keys = path.split(".");
+        const keys = path.split('.');
         const lastKey = keys.pop();
         const target = keys.reduce((obj, key) => {
           if (!obj[key]) obj[key] = {};
@@ -255,11 +255,11 @@ class StateManager {
       this.saveState(immediate);
 
       // Notify subscribers
-      this.notifySubscribers("state:batch-changed", { changes });
+      this.notifySubscribers('state:batch-changed', { changes });
 
       return true;
     } catch (error) {
-      console.error("Failed to batch update state:", error);
+      console.error('Failed to batch update state:', error);
       return false;
     }
   }
@@ -304,7 +304,7 @@ class StateManager {
   resetState() {
     this.state = this.createDefaultState();
     this.saveState(true);
-    this.notifySubscribers("state:reset", {});
+    this.notifySubscribers('state:reset', {});
   }
 
   /**
@@ -322,16 +322,16 @@ class StateManager {
       const importedState = JSON.parse(stateJson);
 
       if (!this.validateState(importedState)) {
-        throw new Error("Invalid state format");
+        throw new Error('Invalid state format');
       }
 
       this.state = importedState;
       this.saveState(true);
-      this.notifySubscribers("state:imported", {});
+      this.notifySubscribers('state:imported', {});
 
       return true;
     } catch (error) {
-      console.error("Failed to import state:", error);
+      console.error('Failed to import state:', error);
       return false;
     }
   }
