@@ -48,32 +48,47 @@ class HTMLRenderer {
 
     // Combine all JavaScript with console overrides
     const allScripts = `
-            // Inject console overrides to capture output from iframe
+            // Inject console overrides to capture output from iframe using postMessage
             (function() {
-                if (window.parent && window.parent.consoleEngine) {
-                    const engine = window.parent.consoleEngine;
-                    
-                    // Override console methods to send output to parent console
-                    console.log = (...args) => {
-                        engine.addOutput('log', args);
-                        engine.originalConsole.log(...args);
-                    };
-                    
-                    console.error = (...args) => {
-                        engine.addOutput('error', args);
-                        engine.originalConsole.error(...args);
-                    };
-                    
-                    console.warn = (...args) => {
-                        engine.addOutput('warn', args);
-                        engine.originalConsole.warn(...args);
-                    };
-                    
-                    console.info = (...args) => {
-                        engine.addOutput('info', args);
-                        engine.originalConsole.info(...args);
-                    };
+                // Safe way to communicate with parent using postMessage
+                function sendToParentConsole(type, args) {
+                    try {
+                        window.parent.postMessage({
+                            type: 'console',
+                            method: type,
+                            args: Array.from(args).map(arg => {
+                                // Safely serialize arguments
+                                if (typeof arg === 'object' && arg !== null) {
+                                    try {
+                                        return JSON.stringify(arg);
+                                    } catch (e) {
+                                        return '[Object]';
+                                    }
+                                }
+                                return arg;
+                            })
+                        }, '*');
+                    } catch (e) {
+                        // Fallback - just use original console
+                    }
                 }
+                
+                // Override console methods to send output to parent console
+                console.log = (...args) => {
+                    sendToParentConsole('log', args);
+                };
+                
+                console.error = (...args) => {
+                    sendToParentConsole('error', args);
+                };
+                
+                console.warn = (...args) => {
+                    sendToParentConsole('warn', args);
+                };
+                
+                console.info = (...args) => {
+                    sendToParentConsole('info', args);
+                };
             })();
             
             ${this.customScripts.join('\n')}

@@ -16,7 +16,6 @@ class StateManager {
     version: StateManager.STATE_VERSION,
     preferences: {
       theme: 'dark',
-      autoRun: false,
       language: 'javascript',
       fontSize: 14,
       minimap: false,

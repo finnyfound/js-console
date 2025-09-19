@@ -100,21 +100,6 @@
             </button>
           </div>
           <div class="editor-controls">
-            <button
-              id="run-code"
-              class="icon-btn primary"
-              title="Run Code (Ctrl+Enter)"
-            >
-              <i data-lucide="play"></i>
-            </button>
-            <button
-              id="toggle-autorun"
-              class="icon-btn"
-              title="Toggle Auto-Run"
-              data-state="off"
-            >
-              <i data-lucide="refresh-cw"></i>
-            </button>
             <button id="format-code" class="icon-btn" title="Format Code">
               <i data-lucide="align-left"></i>
             </button>
@@ -122,39 +107,35 @@
         </div>
         <div class="output-section-tabs">
           <div class="output-tabs">
-            <button class="tab-button active" data-tab="console">
-              <span class="tab-icon"><i data-lucide="terminal"></i></span>
-              <span class="tab-content">
-                <span class="tab-filename">console.log</span>
-                <span class="tab-language">Console</span>
-              </span>
-            </button>
-            <button class="tab-button" data-tab="render">
-              <span class="tab-icon"><i data-lucide="monitor"></i></span>
-              <span class="tab-content">
-                <span class="tab-filename">preview.html</span>
-                <span class="tab-language">Output</span>
-              </span>
-            </button>
-          </div>
-          <div class="output-controls">
-            <button
-              id="clear-console"
-              class="icon-btn tab-clear-btn"
-              title="Clear Console"
-              data-tab-target="console"
-            >
-              <i data-lucide="trash-2"></i>
-            </button>
-            <button
-              id="clear-render"
-              class="icon-btn tab-clear-btn"
-              title="Clear Output"
-              data-tab-target="render"
-              style="display: none"
-            >
-              <i data-lucide="eraser"></i>
-            </button>
+            <div class="output-tab-buttons">
+              <button class="tab-button active" data-tab="console">
+                <span class="tab-icon"><i data-lucide="terminal"></i></span>
+                <span>Console</span>
+              </button>
+              <button class="tab-button" data-tab="render">
+                <span class="tab-icon"><i data-lucide="monitor"></i></span>
+                <span>Output</span>
+              </button>
+            </div>
+            <div class="output-controls">
+              <button
+                id="clear-console"
+                class="icon-btn tab-clear-btn"
+                title="Clear Console"
+                data-tab-target="console"
+              >
+                <i data-lucide="trash-2"></i>
+              </button>
+              <button
+                id="clear-render"
+                class="icon-btn tab-clear-btn"
+                title="Clear Output"
+                data-tab-target="render"
+                style="display: none"
+              >
+                <i data-lucide="eraser"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -165,6 +146,37 @@
         </div>
 
         <div class="output-section">
+          <!-- Mobile output tabs (hidden on desktop) -->
+          <div class="mobile-output-tabs">
+            <div class="mobile-output-tab-buttons">
+              <button class="mobile-tab-button active" data-tab="console">
+                <span class="tab-icon"><i data-lucide="terminal"></i></span>
+                <span>Console</span>
+              </button>
+              <button class="mobile-tab-button" data-tab="render">
+                <span class="tab-icon"><i data-lucide="monitor"></i></span>
+                <span>Output</span>
+              </button>
+            </div>
+            <div class="mobile-output-controls">
+              <button
+                class="icon-btn tab-clear-btn mobile-clear-btn mobile-clear-console"
+                title="Clear Console"
+                data-tab-target="console"
+              >
+                <i data-lucide="trash-2"></i>
+              </button>
+              <button
+                class="icon-btn tab-clear-btn mobile-clear-btn mobile-clear-render"
+                title="Clear Output"
+                data-tab-target="render"
+                style="display: none"
+              >
+                <i data-lucide="eraser"></i>
+              </button>
+            </div>
+          </div>
+
           <div id="console-output" class="output-panel active">
             <div class="console-content">
               <div id="console-log" class="console-log"></div>

@@ -493,28 +493,44 @@ body.dark-theme {
 
 .output-tabs {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.output-tab-buttons {
+  display: flex;
+  gap: 4px;
 }
 
 .output-controls {
   display: flex;
   gap: 4px;
+  align-items: center;
+  height: 100%;
+  margin-left: auto;
+}
+
+.output-controls .icon-btn {
+  height: 28px;
+  align-self: center;
 }
 
 .tab-button {
-  padding: 8px 16px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: var(--font-family-ui);
-  color: #666;
-  transition: all 0.2s ease;
-  border-bottom: 2px solid transparent;
-  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 50px;
+  gap: 6px;
+  padding: 6px 16px;
+  border: none;
+  background: none;
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-family: var(--font-family-ui);
+  min-height: 28px;
 }
 
 .tab-button .tab-icon {
@@ -530,35 +546,14 @@ body.dark-theme {
   stroke-width: 2;
 }
 
-.tab-button .tab-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.1;
-}
-
-.tab-button .tab-filename {
-  font-size: 12px;
-  font-weight: 600;
-  color: inherit;
-}
-
-.tab-button .tab-language {
-  font-size: 10px;
-  font-weight: 400;
-  opacity: 0.7;
-  margin-top: 1px;
-}
-
 .tab-button:hover {
-  background-color: rgba(0, 122, 204, 0.1);
-  color: #007acc;
+  background-color: #e9ecef;
+  color: #495057;
 }
 
 .tab-button.active {
-  color: #58a6ff;
-  border-bottom-color: #58a6ff;
-  background-color: rgba(88, 166, 255, 0.1);
+  background-color: #007acc;
+  color: #fff;
 }
 
 .dark-theme .tab-button {
@@ -566,8 +561,13 @@ body.dark-theme {
 }
 
 .dark-theme .tab-button:hover {
-  background-color: rgba(88, 166, 255, 0.1);
+  background-color: #21262d;
   color: #e6edf3;
+}
+
+.dark-theme .tab-button.active {
+  background-color: #58a6ff;
+  color: #0d1117;
 }
 
 /* Output panels */
@@ -729,6 +729,11 @@ body.dark-theme {
   font-weight: 500;
 }
 
+/* Mobile output tabs - hidden on desktop */
+.mobile-output-tabs {
+  display: none;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .app-main {
@@ -752,6 +757,164 @@ body.dark-theme {
   .btn {
     font-size: 12px;
     padding: 6px 12px;
+  }
+
+  /* Keep language tabs horizontal, hide desktop output tabs */
+  .language-section {
+    flex: 1;
+    border-right: none;
+    padding: 0 12px;
+  }
+
+  .output-section-tabs {
+    display: none; /* Hide desktop output tabs */
+  }
+
+  /* Make language tabs smaller on mobile */
+  .language-tab {
+    min-height: 40px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .tab-filename {
+    font-size: 11px;
+  }
+
+  .tab-language {
+    font-size: 9px;
+  }
+
+  /* Show mobile output tabs */
+  .mobile-output-tabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0 12px;
+    min-height: 40px;
+  }
+
+  .dark-theme .mobile-output-tabs {
+    background-color: #161b22;
+    border-bottom-color: #21262d;
+  }
+
+  .mobile-output-tab-buttons {
+    display: flex;
+    gap: 4px;
+  }
+
+  .mobile-tab-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: none;
+    background: none;
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-tab-button:hover {
+    background-color: #e9ecef;
+    color: #495057;
+  }
+
+  .mobile-tab-button.active {
+    background-color: #007acc;
+    color: #fff;
+  }
+
+  .dark-theme .mobile-tab-button {
+    color: #7d8590;
+  }
+
+  .dark-theme .mobile-tab-button:hover {
+    background-color: #21262d;
+    color: #e6edf3;
+  }
+
+  .dark-theme .mobile-tab-button.active {
+    background-color: #58a6ff;
+    color: #0d1117;
+  }
+
+  .mobile-output-controls {
+    display: flex;
+    gap: 4px;
+  }
+
+  .mobile-tab-button .tab-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Enable scrolling for mobile console */
+  .output-panel {
+    overflow-y: auto;
+    max-height: calc(100vh - 150px); /* Reduced offset for better fit */
+  }
+
+  .console-content {
+    overflow-y: auto;
+    max-height: 100%;
+    height: 100%;
+  }
+
+  .console-log {
+    overflow-y: auto;
+    max-height: calc(100vh - 200px); /* Adjusted for better mobile fit */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    margin-bottom: 0;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .app-header {
+    padding: 4px 8px;
+    flex-wrap: wrap;
+  }
+
+  .app-title {
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .language-tab,
+  .tab-button {
+    padding: 4px 8px;
+    min-height: 36px;
+    font-size: 11px;
+  }
+
+  .tab-filename {
+    font-size: 10px;
+  }
+
+  .tab-language {
+    display: none; /* Hide language labels on very small screens */
+  }
+
+  .tab-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .icon-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .monaco-editor-container {
+    min-height: 200px;
   }
 }
 

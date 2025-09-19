@@ -16,7 +16,6 @@ class JSConsoleApp {
   // Constants for localStorage keys - now handled by StateManager
   static STORAGE_KEYS = {
     theme: 'js-console-theme',
-    autoRun: 'js-console-autorun',
     language: 'jsConsole_language',
   };
 
@@ -24,8 +23,6 @@ class JSConsoleApp {
   static MESSAGES = {
     runningCode: 'Running code...',
     ready: 'Ready',
-    autoRunOn: 'Auto-Run: ON - Click to disable',
-    autoRunOff: 'Auto-Run: OFF - Click to enable',
   };
 
   constructor() {
@@ -40,12 +37,11 @@ class JSConsoleApp {
     // Load state from StateManager
     this.isDarkTheme =
       this.stateManager.getState('preferences.theme') === 'dark';
-    this.isAutoRunEnabled = this.stateManager.getState('preferences.autoRun');
     this.currentLanguage = this.stateManager.getState(
       'session.currentLanguage'
     );
-    this.autoRunTimeout = null;
-    this.isSwitchingTabs = false; // Flag to prevent auto-run during tab switches
+    this.executeTimeout = null;
+    this.isSwitchingTabs = false; // Flag to prevent execution during tab switches
 
     // Track last rendered content to prevent unnecessary updates
     this.lastRenderedContent = {
@@ -71,11 +67,6 @@ class JSConsoleApp {
       this.applyTheme();
     });
 
-    this.stateManager.subscribe('state:changed:preferences.autoRun', (data) => {
-      this.isAutoRunEnabled = data.value;
-      this.updateAutoRunButtonUI();
-    });
-
     this.stateManager.subscribe(
       'state:changed:session.currentLanguage',
       (data) => {
@@ -99,7 +90,6 @@ class JSConsoleApp {
   async initializeApp() {
     // Apply basic UI state before initializing editor (but not Monaco theme yet)
     this.applyUITheme(); // New method for non-Monaco UI elements
-    this.updateAutoRunButtonUI();
     this.initializeLanguageTabUI(); // Set initial language tab state
 
     await this.initializeMonacoEditor();
@@ -138,6 +128,17 @@ class JSConsoleApp {
 
     if (hasHtmlContent || hasCssContent) {
       this.render();
+    }
+
+    // Execute initial JavaScript if we're on the JS tab and have code
+    if (this.currentLanguage === 'javascript' && this.editor) {
+      const code = this.editor.getValue();
+      if (code.trim()) {
+        // Delay execution slightly to ensure everything is ready
+        setTimeout(() => {
+          this.runEditorCode();
+        }, 100);
+      }
     }
   }
 
@@ -268,19 +269,9 @@ class JSConsoleApp {
   }
 
   setupEventListeners() {
-    // Auto-run toggle
-    document.getElementById('toggle-autorun').addEventListener('click', () => {
-      this.toggleAutoRun();
-    });
-
     // Emergency stop
     document.getElementById('emergency-stop').addEventListener('click', () => {
       this.emergencyStop();
-    });
-
-    // Run button
-    document.getElementById('run-code').addEventListener('click', () => {
-      this.runEditorCode();
     });
 
     // Format button
@@ -306,6 +297,18 @@ class JSConsoleApp {
       this.htmlRenderer.clear();
     });
 
+    // Mobile clear buttons
+    document.querySelectorAll('.mobile-clear-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.tabTarget;
+        if (target === 'console') {
+          this.consoleEngine.clearOutput();
+        } else if (target === 'render') {
+          this.htmlRenderer.clear();
+        }
+      });
+    });
+
     // Theme toggle
     document.getElementById('toggle-theme').addEventListener('click', () => {
       this.toggleTheme();
@@ -317,57 +320,122 @@ class JSConsoleApp {
         this.editor.layout();
       }
     });
+
+    // Listen for console messages from iframe
+    window.addEventListener('message', (event) => {
+      // Verify the message is from our iframe and is a console message
+      if (event.data && event.data.type === 'console') {
+        const { method, args } = event.data;
+        if (
+          this.consoleEngine &&
+          typeof this.consoleEngine.addOutput === 'function'
+        ) {
+          // Parse arguments back to proper format
+          const parsedArgs = args.map((arg) => {
+            if (
+              typeof arg === 'string' &&
+              arg.startsWith('{') &&
+              arg.endsWith('}')
+            ) {
+              try {
+                return JSON.parse(arg);
+              } catch (e) {
+                return arg;
+              }
+            }
+            return arg;
+          });
+          this.consoleEngine.addOutput(method, parsedArgs);
+        }
+      }
+    });
   }
 
   setupTabSwitching() {
     const tabButtons = document.querySelectorAll('.tab-button');
+    const mobileTabButtons = document.querySelectorAll('.mobile-tab-button');
     const outputPanels = document.querySelectorAll('.output-panel');
     const clearButtons = document.querySelectorAll('.tab-clear-btn');
+    const mobileClearButtons = document.querySelectorAll('.mobile-clear-btn');
 
+    // Handle desktop tab switching
     tabButtons.forEach((button) => {
       button.addEventListener('click', () => {
         const targetTab = button.dataset.tab;
+        this.switchToOutputTab(targetTab);
+      });
+    });
 
-        // Update active tab
-        tabButtons.forEach((btn) => btn.classList.remove('active'));
-        button.classList.add('active');
-
-        // Update clear button visibility based on active tab
-        clearButtons.forEach((clearBtn) => {
-          const buttonTarget = clearBtn.dataset.tabTarget;
-          if (buttonTarget === targetTab) {
-            clearBtn.style.display = 'inline-flex';
-          } else {
-            clearBtn.style.display = 'none';
-          }
-        });
-
-        // Update active panel - only show the correct panel
-        outputPanels.forEach((panel) => {
-          panel.classList.remove('active');
-
-          // Show console-output panel for console tab
-          if (targetTab === 'console' && panel.id === 'console-output') {
-            panel.classList.add('active');
-          }
-          // Show html-render panel for render tab
-          else if (targetTab === 'render' && panel.id === 'html-render') {
-            panel.classList.add('active');
-            // Auto-render when switching to Output tab
-            this.render();
-          }
-        });
+    // Handle mobile tab switching
+    mobileTabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const targetTab = button.dataset.tab;
+        this.switchToOutputTab(targetTab);
       });
     });
   }
 
-  runEditorCode(isAutomatic = false) {
-    // Prevent manual run if auto-run is enabled (but allow automatic execution)
-    if (!isAutomatic && this.isAutoRunEnabled) {
-      this.updateStatus('Auto-run is enabled - disable it to use manual run');
-      return;
-    }
+  switchToOutputTab(targetTab) {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const mobileTabButtons = document.querySelectorAll('.mobile-tab-button');
+    const outputPanels = document.querySelectorAll('.output-panel');
+    const clearButtons = document.querySelectorAll('.tab-clear-btn');
+    const mobileClearButtons = document.querySelectorAll('.mobile-clear-btn');
 
+    // Update active tab state for both desktop and mobile
+    tabButtons.forEach((btn) => btn.classList.remove('active'));
+    mobileTabButtons.forEach((btn) => btn.classList.remove('active'));
+
+    // Find and activate the correct tab buttons
+    tabButtons.forEach((btn) => {
+      if (btn.dataset.tab === targetTab) {
+        btn.classList.add('active');
+      }
+    });
+    mobileTabButtons.forEach((btn) => {
+      if (btn.dataset.tab === targetTab) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Update clear button visibility for desktop
+    clearButtons.forEach((clearBtn) => {
+      const buttonTarget = clearBtn.dataset.tabTarget;
+      if (buttonTarget === targetTab) {
+        clearBtn.style.display = 'inline-flex';
+      } else {
+        clearBtn.style.display = 'none';
+      }
+    });
+
+    // Update clear button visibility for mobile
+    mobileClearButtons.forEach((clearBtn) => {
+      const buttonTarget = clearBtn.dataset.tabTarget;
+      if (buttonTarget === targetTab) {
+        clearBtn.style.display = 'inline-flex';
+      } else {
+        clearBtn.style.display = 'none';
+      }
+    });
+
+    // Update active panel - only show the correct panel
+    outputPanels.forEach((panel) => {
+      panel.classList.remove('active');
+
+      // Show console-output panel for console tab
+      if (targetTab === 'console' && panel.id === 'console-output') {
+        panel.classList.add('active');
+      }
+      // Show html-render panel for render tab
+      else if (targetTab === 'render' && panel.id === 'html-render') {
+        panel.classList.add('active');
+        // Auto-render when switching to Output tab
+        this.render();
+      }
+    });
+  }
+
+  runEditorCode() {
     const code = this.editor.getValue();
     if (code.trim()) {
       this.updateStatus(JSConsoleApp.MESSAGES.runningCode);
@@ -441,9 +509,6 @@ class JSConsoleApp {
 
     // Save language preference to state manager
     this.stateManager.setState('session.currentLanguage', language);
-
-    // Always ensure auto-run button UI is synchronized
-    this.updateAutoRunButtonUI();
 
     // Clear the flag after a short delay to allow setValue to complete
     setTimeout(() => {
@@ -572,72 +637,6 @@ class JSConsoleApp {
     });
   }
 
-  updateAutoRunButtonUI() {
-    // Single source of truth for auto-run button UI state
-    const toggleButton = document.getElementById('toggle-autorun');
-    if (toggleButton) {
-      if (this.isAutoRunEnabled) {
-        toggleButton.className = 'icon-btn primary';
-        toggleButton.setAttribute('data-state', 'on');
-        toggleButton.title = JSConsoleApp.MESSAGES.autoRunOn;
-      } else {
-        toggleButton.className = 'icon-btn';
-        toggleButton.setAttribute('data-state', 'off');
-        toggleButton.title = JSConsoleApp.MESSAGES.autoRunOff;
-      }
-    }
-
-    // Update run button state based on auto-run status
-    this.updateRunButtonUI();
-  }
-
-  updateRunButtonUI() {
-    const runButton = document.getElementById('run-code');
-    if (runButton) {
-      if (this.isAutoRunEnabled) {
-        runButton.disabled = true;
-        runButton.classList.add('disabled');
-        runButton.title = 'Run button disabled while Auto-Run is active';
-      } else {
-        runButton.disabled = false;
-        runButton.classList.remove('disabled');
-        runButton.title = 'Run code (Ctrl+Enter)';
-      }
-    }
-  }
-
-  toggleAutoRun() {
-    this.isAutoRunEnabled = !this.isAutoRunEnabled;
-
-    // Update UI state
-    this.updateAutoRunButtonUI();
-
-    // Clear any pending auto-run if disabled
-    if (!this.isAutoRunEnabled && this.autoRunTimeout) {
-      clearTimeout(this.autoRunTimeout);
-      this.autoRunTimeout = null;
-    }
-
-    // Save preference to state manager
-    this.stateManager.setState('preferences.autoRun', this.isAutoRunEnabled);
-
-    this.updateStatus(
-      `Auto-run ${this.isAutoRunEnabled ? 'enabled' : 'disabled'}`
-    );
-
-    // Add console message about the status change
-    const autoRunIcon = this.isAutoRunEnabled ? '✅' : '⚡';
-    const statusMessage = this.isAutoRunEnabled
-      ? 'Live updates are now active - code will execute as you type'
-      : 'Live updates disabled - click Run or enable Auto-Run for live updates';
-
-    this.consoleEngine.addOutput('info', [
-      `${autoRunIcon} Auto-Run ${
-        this.isAutoRunEnabled ? 'enabled' : 'disabled'
-      }: ${statusMessage}`,
-    ]);
-  }
-
   showEmergencyStop() {
     const stopButton = document.getElementById('emergency-stop');
     if (stopButton) {
@@ -653,18 +652,18 @@ class JSConsoleApp {
   }
 
   handleEditorChange() {
-    // Don't auto-run if we're currently switching tabs
+    // Don't execute if we're currently switching tabs
     if (this.isSwitchingTabs) {
       return;
     }
 
     // Clear existing timeout
-    if (this.autoRunTimeout) {
-      clearTimeout(this.autoRunTimeout);
+    if (this.executeTimeout) {
+      clearTimeout(this.executeTimeout);
     }
 
-    // Simplified auto-render logic
-    this.autoRunTimeout = setTimeout(() => {
+    // Auto-execute all code after a short delay
+    this.executeTimeout = setTimeout(() => {
       const currentCode = this.editor.getValue();
 
       // Always update code context and save to state
@@ -680,7 +679,7 @@ class JSConsoleApp {
         return;
       }
 
-      // JavaScript: check for HTML context or auto-run
+      // JavaScript: always execute if there's code
       if (this.currentLanguage === 'javascript') {
         const hasHtmlContent =
           this.codeContexts.html.trim() &&
@@ -691,18 +690,18 @@ class JSConsoleApp {
         if (hasHtmlContent) {
           // Render unified view when HTML context exists
           this.render();
-        } else if (this.isAutoRunEnabled && currentCode.trim()) {
-          // Execute JS only if auto-run is enabled (pass true for automatic execution)
-          this.runEditorCode(true);
+        } else if (currentCode.trim()) {
+          // Always execute JS code
+          this.runEditorCode();
         }
       }
     }, 500);
   }
 
   emergencyStop() {
-    // Immediately stop auto-run
-    if (this.autoRunTimeout) {
-      clearTimeout(this.autoRunTimeout);
+    // Immediately stop execution
+    if (this.executeTimeout) {
+      clearTimeout(this.executeTimeout);
     }
 
     // Clear any running timeouts
@@ -719,8 +718,6 @@ class JSConsoleApp {
     this.consoleEngine.addOutput('warn', [
       '🛑 Emergency stop activated - Execution halted',
     ]);
-
-    // Disable auto-run temporarily
     if (this.isAutoRunEnabled) {
       this.toggleAutoRun();
       setTimeout(() => {
@@ -749,18 +746,9 @@ class JSConsoleApp {
     this.consoleEngine.addOutput('info', [
       '🔄 Switch tabs freely - HTML+CSS+JS work together seamlessly',
     ]);
-
-    // Dynamic auto-run status message
-    const autoRunStatus = this.isAutoRunEnabled ? 'enabled' : 'disabled';
-    const autoRunIcon = this.isAutoRunEnabled ? '✅' : '⚡';
     this.consoleEngine.addOutput('info', [
-      `${autoRunIcon} Auto-Run is ${autoRunStatus} - ${
-        this.isAutoRunEnabled
-          ? 'Live updates active'
-          : 'Click the refresh icon to enable live updates'
-      }`,
+      '⚡ All code executes automatically as you type - powered by loop detection',
     ]);
-
     this.consoleEngine.addOutput('info', [
       "🖼️ View complete web pages in the 'Output' tab",
     ]);
