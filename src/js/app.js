@@ -43,6 +43,15 @@ class JSConsoleApp {
     this.executeTimeout = null;
     this.isSwitchingTabs = false; // Flag to prevent execution during tab switches
 
+    // Loop protection always starts enabled by default (no persistence)
+    // The console engine constructor already sets this to true
+
+    // Font size management
+    this.currentFontSize =
+      this.stateManager.getState('preferences.fontSize') || 14;
+    this.minFontSize = 10;
+    this.maxFontSize = 24;
+
     // Track last rendered content to prevent unnecessary updates
     this.lastRenderedContent = {
       html: '',
@@ -100,6 +109,7 @@ class JSConsoleApp {
     this.setupEventListeners();
     this.setupTabSwitching();
     this.showWelcomeMessage();
+    this.setupFloatingMenu();
 
     // Ensure theme icon is correct before creating icons
     this.updateThemeToggleIcon();
@@ -160,7 +170,7 @@ class JSConsoleApp {
             value: initialContent,
             language: this.currentLanguage,
             theme: this.isDarkTheme ? 'custom-dark' : 'custom-light',
-            fontSize: 14,
+            fontSize: this.currentFontSize,
             fontFamily: "'Consolas', monospace", // Use only reliable system font
             fontLigatures: false,
             fontWeight: 'normal',
@@ -756,8 +766,200 @@ class JSConsoleApp {
       "🧹 Use 'Clear Render' to start fresh, 'Clear Console' for JS output",
     ]);
   }
-}
 
+  setupFloatingMenu() {
+    const floatingMenuToggle = document.getElementById('floating-menu-toggle');
+    const floatingMenu = document.getElementById('floating-menu');
+    const floatingHelp = document.getElementById('floating-help');
+    const floatingFontIncrease = document.getElementById(
+      'floating-font-increase'
+    );
+    const floatingFontDecrease = document.getElementById(
+      'floating-font-decrease'
+    );
+    const floatingLoopProtection = document.getElementById(
+      'floating-loop-protection'
+    );
+    const floatingAbout = document.getElementById('floating-about');
+    const aboutModal = document.getElementById('about-modal');
+    const aboutModalClose = document.getElementById('close-about-modal');
+
+    // Toggle menu visibility
+    floatingMenuToggle?.addEventListener('click', () => {
+      floatingMenu.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!floatingMenu.contains(e.target) && !aboutModal.contains(e.target)) {
+        floatingMenu.classList.remove('active');
+      }
+    });
+
+    // Help functionality
+    floatingHelp?.addEventListener('click', () => {
+      this.consoleEngine.context.help();
+      floatingMenu.classList.remove('active');
+    });
+
+    // Font size increase functionality
+    floatingFontIncrease?.addEventListener('click', () => {
+      this.increaseFontSize();
+      floatingMenu.classList.remove('active');
+    });
+
+    // Font size decrease functionality
+    floatingFontDecrease?.addEventListener('click', () => {
+      this.decreaseFontSize();
+      floatingMenu.classList.remove('active');
+    });
+
+    // Loop protection toggle functionality
+    floatingLoopProtection?.addEventListener('click', () => {
+      this.toggleLoopProtection();
+      floatingMenu.classList.remove('active');
+    });
+
+    // Update loop protection text based on current state
+    if (floatingLoopProtection) {
+      const textSpan = floatingLoopProtection.querySelector('span');
+      if (textSpan) {
+        const isEnabled = this.consoleEngine.getLoopProtection();
+        textSpan.textContent = isEnabled
+          ? 'Disable Loop Protection'
+          : 'Enable Loop Protection';
+      }
+    }
+
+    // About modal functionality
+    floatingAbout?.addEventListener('click', () => {
+      aboutModal.classList.add('active');
+      floatingMenu.classList.remove('active');
+    });
+
+    // Close about modal
+    aboutModalClose?.addEventListener('click', () => {
+      aboutModal.classList.remove('active');
+    });
+
+    // Close modal when clicking overlay
+    aboutModal?.addEventListener('click', (e) => {
+      if (e.target === aboutModal) {
+        aboutModal.classList.remove('active');
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && aboutModal.classList.contains('active')) {
+        aboutModal.classList.remove('active');
+      }
+    });
+
+    // Initialize Lucide icons for the floating menu
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
+  }
+
+  downloadCode() {
+    const jsCode = this.editor.getValue();
+    const language = this.currentLanguage;
+
+    const blob = new Blob([jsCode], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `code.${language === 'javascript' ? 'js' : language}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    console.log('Code downloaded successfully!');
+  }
+
+  shareCode() {
+    const jsCode = this.editor.getValue();
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'JS Console Code',
+        text: 'Check out this code!',
+        url: window.location.href,
+      });
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard
+        .writeText(jsCode)
+        .then(() => {
+          console.log('Code copied to clipboard!');
+        })
+        .catch(() => {
+          console.log('Share functionality coming soon!');
+        });
+    }
+  }
+
+  toggleLoopProtection() {
+    const newState = this.consoleEngine.toggleLoopProtection();
+
+    // Update floating menu item text to reflect current state
+    const floatingLoopProtection = document.getElementById(
+      'floating-loop-protection'
+    );
+    if (floatingLoopProtection) {
+      const textSpan = floatingLoopProtection.querySelector('span');
+      if (textSpan) {
+        textSpan.textContent = newState
+          ? 'Disable Loop Protection'
+          : 'Enable Loop Protection';
+      }
+    }
+
+    // Note: Loop protection state is not persisted - always resets to enabled on refresh
+
+    return newState;
+  }
+
+  increaseFontSize() {
+    if (this.currentFontSize < this.maxFontSize) {
+      this.currentFontSize += 1;
+      this.updateEditorFontSize();
+      this.stateManager.setState('preferences.fontSize', this.currentFontSize);
+      this.consoleEngine.addOutput('info', [
+        `Font size increased to ${this.currentFontSize}px`,
+      ]);
+    } else {
+      this.consoleEngine.addOutput('info', [
+        `Font size is already at maximum (${this.maxFontSize}px)`,
+      ]);
+    }
+  }
+
+  decreaseFontSize() {
+    if (this.currentFontSize > this.minFontSize) {
+      this.currentFontSize -= 1;
+      this.updateEditorFontSize();
+      this.stateManager.setState('preferences.fontSize', this.currentFontSize);
+      this.consoleEngine.addOutput('info', [
+        `Font size decreased to ${this.currentFontSize}px`,
+      ]);
+    } else {
+      this.consoleEngine.addOutput('info', [
+        `Font size is already at minimum (${this.minFontSize}px)`,
+      ]);
+    }
+  }
+
+  updateEditorFontSize() {
+    if (this.editor) {
+      this.editor.updateOptions({
+        fontSize: this.currentFontSize,
+      });
+    }
+  }
+}
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   window.jsConsoleApp = new JSConsoleApp();

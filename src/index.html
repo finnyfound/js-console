@@ -3,24 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Online JavaScript, HTML & CSS Playground and Formatter</title>
+    <title>JS Formatter Console - Online JavaScript, HTML & CSS Editor</title>
     <meta
       name="description"
-      content="Run, beautify, and validate JavaScript, HTML, and CSS code instantly online. Test your code in real-time and improve workflow with formatting and debugging tools."
+      content="Free online JavaScript console with real-time code execution, HTML/CSS rendering, and advanced debugging features. Part of the JSFormatter suite of developer tools."
     />
     <meta name="author" content="Finny Kochummen" />
     <meta
       name="keywords"
-      content="JavaScript playground, online formatter, HTML editor, CSS beautifier, run code online, JS validator, code beautify, web development tools"
+      content="JS Formatter Console, JavaScript console, online code editor, HTML CSS editor, JavaScript playground, code formatter, web development tools, JS debugger"
     />
     <meta name="theme-color" content="#79c0ff" />
     <meta
       property="og:title"
-      content="Online JavaScript, HTML & CSS Playground and Formatter"
+      content="JS Formatter Console - Online JavaScript, HTML & CSS Editor"
     />
     <meta
       property="og:description"
-      content="Run, beautify, and validate JavaScript, HTML, and CSS code instantly online. Test your code in real-time and improve workflow with formatting and debugging tools."
+      content="Free online JavaScript console with real-time code execution, HTML/CSS rendering, and advanced debugging features. Part of the JSFormatter suite of developer tools."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://console.jsformatter.net" />
@@ -56,7 +56,7 @@
     <div class="app-container">
       <header class="app-header">
         <h1>
-          Online JavaScript, HTML & CSS Playground and Formatter |
+          JS Formatter Console - Online JavaScript, HTML & CSS Editor |
           JSFormatter.net
         </h1>
         <div class="header-controls">
@@ -197,6 +197,118 @@
       <div class="status-bar">
         <span id="status-text">Ready</span>
         <span id="execution-time"></span>
+      </div>
+
+      <!-- Floating Menu -->
+      <div class="floating-menu" id="floating-menu">
+        <button
+          class="floating-menu-toggle"
+          id="floating-menu-toggle"
+          title="Menu"
+        >
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="floating-menu-items" id="floating-menu-items">
+          <button class="floating-menu-item" id="floating-help" title="Help">
+            <i data-lucide="help-circle"></i>
+            <span>Help</span>
+          </button>
+          <button
+            class="floating-menu-item"
+            id="floating-font-increase"
+            title="Increase Font Size"
+          >
+            <i data-lucide="zoom-in"></i>
+            <span>Font Size +</span>
+          </button>
+          <button
+            class="floating-menu-item"
+            id="floating-font-decrease"
+            title="Decrease Font Size"
+          >
+            <i data-lucide="zoom-out"></i>
+            <span>Font Size -</span>
+          </button>
+          <button
+            class="floating-menu-item"
+            id="floating-loop-protection"
+            title="Toggle Loop Protection"
+          >
+            <i data-lucide="shield"></i>
+            <span>Loop Protection</span>
+          </button>
+          <button class="floating-menu-item" id="floating-about" title="About">
+            <i data-lucide="info"></i>
+            <span>About</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- About Modal -->
+      <div class="modal-overlay" id="about-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>About JS Formatter Console</h2>
+            <button class="modal-close" id="close-about-modal">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="about-section">
+              <h3>Features</h3>
+              <ul>
+                <li>🚀 Real-time JavaScript, HTML & CSS execution</li>
+                <li>🔒 Advanced loop protection with customizable limits</li>
+                <li>🎨 Syntax highlighting with Monaco Editor</li>
+                <li>📱 Responsive design for mobile and desktop</li>
+                <li>🌙 Dark/Light theme support</li>
+                <li>📝 Code formatting and beautification</li>
+                <li>💾 Auto-save and state management</li>
+                <li>🔍 Command history and autocomplete</li>
+                <li>⚡ Infinite loop detection and prevention</li>
+                <li>🎯 Cross-origin iframe safety</li>
+                <li>🔧 Adjustable font sizes for better accessibility</li>
+              </ul>
+            </div>
+            <div class="about-section">
+              <h3>Part of JSFormatter Suite</h3>
+              <ul>
+                <li>
+                  ⚡ JS Formatter Console - Interactive code playground (this
+                  tool)
+                </li>
+                <li>🛠️ Professional developer tools ecosystem</li>
+                <li>📊 Trusted by thousands of developers worldwide</li>
+              </ul>
+            </div>
+            <div class="about-section">
+              <h3>Built With</h3>
+              <ul>
+                <li>Monaco Editor (VS Code editor)</li>
+                <li>Lucide Icons</li>
+                <li>Modern ES6+ JavaScript</li>
+                <li>CSS Grid & Flexbox</li>
+                <li>Google Fonts</li>
+              </ul>
+            </div>
+            <div class="about-section">
+              <h3>Safety Features</h3>
+              <ul>
+                <li>Loop iteration limits (1500 max)</li>
+                <li>Execution time limits (3-5 seconds)</li>
+                <li>Memory usage monitoring</li>
+                <li>Safe iframe rendering</li>
+                <li>Error handling and recovery</li>
+                <li>Toggleable loop protection</li>
+              </ul>
+            </div>
+            <div class="about-footer">
+              <p>Created with ❤️ for developers and learners</p>
+              <p>Part of the <strong>JSFormatter</strong> suite of tools</p>
+              <p class="version">Version 2.1.0</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

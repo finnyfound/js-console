@@ -8,6 +8,7 @@ class ConsoleEngine {
     this.historyIndex = -1;
     this.output = [];
     this.updateThrottleTimeout = null;
+    this.loopProtectionEnabled = true; // Loop protection enabled by default
 
     // Capture console methods
     this.originalConsole = {
@@ -195,8 +196,10 @@ JS Console Commands:
   }
 
   executeJavaScript(code) {
-    // Add comprehensive loop safety protection
-    const safeCode = this.addComprehensiveLoopSafety(code);
+    // Add comprehensive loop safety protection if enabled
+    const safeCode = this.loopProtectionEnabled
+      ? this.addComprehensiveLoopSafety(code)
+      : code;
 
     // Make sure document is available in context
     this.context.document = document;
@@ -532,6 +535,25 @@ JS Console Commands:
   addLoopSafety(code) {
     // Legacy method - now redirects to comprehensive version
     return this.addComprehensiveLoopSafety(code);
+  }
+
+  // Loop protection control methods
+  setLoopProtection(enabled, silent = false) {
+    this.loopProtectionEnabled = enabled;
+    if (!silent) {
+      this.addOutput('info', [
+        `Loop protection ${enabled ? 'enabled' : 'disabled'} ⚡`,
+      ]);
+    }
+    return this.loopProtectionEnabled;
+  }
+
+  getLoopProtection() {
+    return this.loopProtectionEnabled;
+  }
+
+  toggleLoopProtection() {
+    return this.setLoopProtection(!this.loopProtectionEnabled, false); // Always show feedback when toggling
   }
 }
 
