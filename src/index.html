@@ -4,16 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JS Formatter Console - Online JavaScript, HTML & CSS Editor</title>
+    <meta name="robots" content="index, follow" />
     <meta
       name="description"
       content="Free online JavaScript console with real-time code execution, HTML/CSS rendering, and advanced debugging features. Part of the JSFormatter suite of developer tools."
     />
     <meta name="author" content="Finny Kochummen" />
+    <meta name="application-name" content="JS Formatter Console" />
     <meta
       name="keywords"
       content="JS Formatter Console, JavaScript console, online code editor, HTML CSS editor, JavaScript playground, code formatter, web development tools, JS debugger"
     />
-    <meta name="theme-color" content="#79c0ff" />
+    <meta name="theme-color" content="#67e8f9" />
     <meta
       property="og:title"
       content="JS Formatter Console - Online JavaScript, HTML & CSS Editor"
@@ -28,6 +30,7 @@
       property="og:site_name"
       content="JS Formatter Console - Online JavaScript, HTML & CSS Editor"
     />
+    <meta property="og:locale" content="en_US" />
     <meta
       property="og:image"
       content="https://console.jsformatter.net/favicon.png"
@@ -65,6 +68,18 @@
         "description": "Free online JavaScript console with real-time code execution, HTML/CSS rendering, and advanced debugging features.",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript",
+        "inLanguage": "en",
+        "featureList": [
+          "Real-time JavaScript execution",
+          "HTML and CSS live rendering",
+          "Monaco Editor with syntax highlighting",
+          "Infinite loop protection",
+          "Auto-save to local storage",
+          "Dark and light theme",
+          "Code formatting",
+          "Console output with error reporting"
+        ],
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -72,17 +87,88 @@
         },
         "author": {
           "@type": "Person",
-          "name": "Finny Kochummen"
+          "name": "Finny Kochummen",
+          "url": "https://github.com/finnyfound"
         },
         "isPartOf": {
           "@type": "WebSite",
           "name": "JSFormatter",
           "url": "https://jsformatter.net"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "codeRepository": "https://github.com/finnyfound/js-console"
+      }
+    </script>
+
+    <!-- WebSite Schema for sitelinks and AI discoverability -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "JS Formatter Console",
+        "url": "https://console.jsformatter.net",
+        "description": "Free online JavaScript, HTML and CSS code editor and console.",
+        "inLanguage": "en",
+        "publisher": {
+          "@type": "Person",
+          "name": "Finny Kochummen",
+          "url": "https://github.com/finnyfound"
         }
       }
     </script>
 
+    <!-- FAQPage Structured Data for Rich Results -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I run JavaScript online?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Type or paste your JavaScript into the editor and press Ctrl+Enter (or Cmd+Enter on Mac). Your code executes instantly and the output appears in the Console panel."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does it support HTML and CSS?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Click the HTML or CSS tab at the top to switch modes. Then click the Output tab to see your rendered page. All three languages work together and are rendered live."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my code saved between sessions?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Your code is automatically saved to your browser's local storage after every change. Close the tab, come back later — your last code will still be there."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between the Console and Output tabs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Console shows the results of JavaScript execution — console.log output, errors, and return values. Output renders your HTML and CSS as a live web page inside a sandboxed frame."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, completely free with no sign-up or account required. Just open the page and start coding."
+            }
+          }
+        ]
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
@@ -103,8 +189,13 @@
     <div class="app-container">
       <header class="app-header">
         <h1>
-          JS Formatter Console - Online JavaScript, HTML & CSS Editor |
-          JSFormatter.net
+          JS Formatter Console
+          <span class="title-subtitle" aria-hidden="true"
+            >- Online JavaScript, HTML &amp; CSS Editor</span
+          >
+          <span class="title-url" aria-hidden="true"
+            >| console.jsformatter.net</span
+          >
         </h1>
         <div class="header-controls">
           <button
@@ -114,6 +205,31 @@
             title="Emergency Stop"
           >
             <i data-lucide="octagon-x"></i>
+          </button>
+          <button id="header-help" class="icon-btn" title="Help">
+            <i data-lucide="help-circle"></i>
+          </button>
+          <button
+            id="header-font-increase"
+            class="icon-btn"
+            title="Increase Font Size"
+          >
+            <i data-lucide="zoom-in"></i>
+          </button>
+          <button
+            id="header-font-decrease"
+            class="icon-btn"
+            title="Decrease Font Size"
+          >
+            <i data-lucide="zoom-out"></i>
+          </button>
+          <div class="header-divider"></div>
+          <button
+            id="header-loop-protection"
+            class="icon-btn icon-btn--active"
+            title="Disable Loop Protection"
+          >
+            <i data-lucide="shield"></i>
           </button>
           <button id="toggle-theme" class="icon-btn" title="Toggle Theme">
             <i data-lucide="moon"></i>
@@ -188,7 +304,7 @@
         </div>
       </div>
 
-      <main class="app-main">
+      <main class="app-main" aria-label="Code editor and console">
         <div class="editor-section">
           <div id="monaco-editor" class="monaco-editor-container"></div>
         </div>
@@ -245,118 +361,239 @@
         <span id="status-text">Ready</span>
         <span id="execution-time"></span>
       </div>
+    </div>
 
-      <!-- Floating Menu -->
-      <div class="floating-menu" id="floating-menu">
-        <button
-          class="floating-menu-toggle"
-          id="floating-menu-toggle"
-          title="Menu"
-        >
-          <i data-lucide="menu"></i>
-        </button>
-        <div class="floating-menu-items" id="floating-menu-items">
-          <button class="floating-menu-item" id="floating-help" title="Help">
-            <i data-lucide="help-circle"></i>
-            <span>Help</span>
-          </button>
-          <button
-            class="floating-menu-item"
-            id="floating-font-increase"
-            title="Increase Font Size"
-          >
-            <i data-lucide="zoom-in"></i>
-            <span>Font Size +</span>
-          </button>
-          <button
-            class="floating-menu-item"
-            id="floating-font-decrease"
-            title="Decrease Font Size"
-          >
-            <i data-lucide="zoom-out"></i>
-            <span>Font Size -</span>
-          </button>
-          <button
-            class="floating-menu-item"
-            id="floating-loop-protection"
-            title="Toggle Loop Protection"
-          >
-            <i data-lucide="shield"></i>
-            <span>Loop Protection</span>
-          </button>
-          <button class="floating-menu-item" id="floating-about" title="About">
-            <i data-lucide="info"></i>
-            <span>About</span>
-          </button>
-        </div>
-      </div>
+    <button class="go-to-editor" id="go-to-editor" aria-label="Go to Editor">
+      <i data-lucide="arrow-up"></i>
+      <span>Go to Editor</span>
+    </button>
 
-      <!-- About Modal -->
-      <div class="modal-overlay" id="about-modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2>About JS Formatter Console</h2>
-            <button class="modal-close" id="close-about-modal">
-              <i data-lucide="x"></i>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="about-section">
-              <h3>Features</h3>
-              <ul>
-                <li>🚀 Real-time JavaScript, HTML & CSS execution</li>
-                <li>🔒 Advanced loop protection with customizable limits</li>
-                <li>🎨 Syntax highlighting with Monaco Editor</li>
-                <li>📱 Responsive design for mobile and desktop</li>
-                <li>🌙 Dark/Light theme support</li>
-                <li>📝 Code formatting and beautification</li>
-                <li>💾 Auto-save and state management</li>
-                <li>🔍 Command history and autocomplete</li>
-                <li>⚡ Infinite loop detection and prevention</li>
-                <li>🎯 Cross-origin iframe safety</li>
-                <li>🔧 Adjustable font sizes for better accessibility</li>
-              </ul>
+    <!-- SEO Content Sections -->
+    <div class="seo-content">
+      <!-- Features Section -->
+      <section class="features-section" id="features" aria-label="Features">
+        <div class="section-container">
+          <h2 class="section-title">
+            Everything you need to write JavaScript online
+          </h2>
+          <p class="section-subtitle">
+            A full-featured code playground that runs right in your browser — no
+            install needed.
+          </p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon feature-icon--teal">
+                <i data-lucide="zap"></i>
+              </div>
+              <h3>Run JavaScript Instantly</h3>
+              <p>
+                Type or paste code and execute it with a click. Results appear
+                immediately in the Console panel, including logs, errors, and
+                return values.
+              </p>
             </div>
-            <div class="about-section">
-              <h3>Part of JSFormatter Suite</h3>
-              <ul>
-                <li>
-                  ⚡ JS Formatter Console - Interactive code playground (this
-                  tool)
-                </li>
-                <li>🛠️ Professional developer tools ecosystem</li>
-                <li>📊 Trusted by thousands of developers worldwide</li>
-              </ul>
+            <div class="feature-card">
+              <div class="feature-icon feature-icon--indigo">
+                <i data-lucide="monitor"></i>
+              </div>
+              <h3>Render HTML &amp; CSS Live</h3>
+              <p>
+                Switch to HTML or CSS mode and preview your full web page
+                rendered in the Output tab. Great for quickly prototyping
+                layouts and styles.
+              </p>
             </div>
-            <div class="about-section">
-              <h3>Built With</h3>
-              <ul>
-                <li>Monaco Editor (VS Code editor)</li>
-                <li>Lucide Icons</li>
-                <li>Modern ES6+ JavaScript</li>
-                <li>CSS Grid & Flexbox</li>
-                <li>Google Fonts</li>
-              </ul>
+            <div class="feature-card">
+              <div class="feature-icon feature-icon--emerald">
+                <i data-lucide="code"></i>
+              </div>
+              <h3>Monaco Editor — VS Code Quality</h3>
+              <p>
+                Write code with the same editor that powers VS Code. Syntax
+                highlighting, IntelliSense, bracket matching, and more — all in
+                the browser.
+              </p>
             </div>
-            <div class="about-section">
-              <h3>Safety Features</h3>
-              <ul>
-                <li>Loop iteration limits (1500 max)</li>
-                <li>Execution time limits (3-5 seconds)</li>
-                <li>Memory usage monitoring</li>
-                <li>Safe iframe rendering</li>
-                <li>Error handling and recovery</li>
-                <li>Toggleable loop protection</li>
-              </ul>
+            <div class="feature-card">
+              <div class="feature-icon feature-icon--slate">
+                <i data-lucide="shield"></i>
+              </div>
+              <h3>Loop Protection Built-in</h3>
+              <p>
+                Infinite loop detection automatically stops runaway code before
+                it freezes your browser. Safe to experiment freely without any
+                risk.
+              </p>
             </div>
-            <div class="about-footer">
-              <p>Created with ❤️ for developers and learners</p>
-              <p>Part of the <strong>JSFormatter</strong> suite of tools</p>
-              <p class="version">Version 2.1.0</p>
+            <div class="feature-card">
+              <div class="feature-icon feature-icon--purple">
+                <i data-lucide="save"></i>
+              </div>
+              <h3>Auto-saves Your Work</h3>
+              <p>
+                Your code is preserved in your browser between sessions. Close
+                the tab and come back later — everything is still there waiting
+                for you.
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon feature-icon--rose">
+                <i data-lucide="moon"></i>
+              </div>
+              <h3>Dark &amp; Light Theme</h3>
+              <p>
+                Switch between themes to suit your environment. Dark mode for
+                night sessions, light mode for bright screens — one click to
+                change.
+              </p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <!-- Use Cases Section -->
+      <section
+        class="use-cases-section"
+        id="use-cases"
+        aria-label="Who is this for"
+      >
+        <div class="section-container">
+          <h2 class="section-title">Who is it for?</h2>
+          <div class="use-cases-grid">
+            <div class="use-case-card">
+              <div class="use-case-icon use-case-icon--indigo">
+                <i data-lucide="graduation-cap"></i>
+              </div>
+              <h3>Students &amp; Learners</h3>
+              <p>
+                Learning JavaScript? Practice concepts, test examples from
+                tutorials, and see how code behaves — all without any setup or
+                installation.
+              </p>
+            </div>
+            <div class="use-case-card">
+              <div class="use-case-icon use-case-icon--emerald">
+                <i data-lucide="wrench"></i>
+              </div>
+              <h3>Developers Debugging</h3>
+              <p>
+                Quickly isolate a bug without spinning up a full project. Paste
+                the problematic snippet, run it, and find the issue in seconds.
+              </p>
+            </div>
+            <div class="use-case-card">
+              <div class="use-case-icon use-case-icon--teal">
+                <i data-lucide="lightbulb"></i>
+              </div>
+              <h3>Rapid Prototyping</h3>
+              <p>
+                Turn an idea into working code instantly. Test an API response,
+                validate a regex, or sketch a UI concept without any
+                boilerplate.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section
+        class="faq-section"
+        id="faq"
+        aria-label="Frequently asked questions"
+      >
+        <div class="section-container">
+          <h2 class="section-title">Have questions?</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary class="faq-question">
+                How do I run JavaScript online?
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  Type or paste your JavaScript into the editor and press
+                  <strong>Ctrl+Enter</strong> (or Cmd+Enter on Mac). Your code
+                  executes instantly and the output appears in the Console panel
+                  on the right.
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                Does it support HTML and CSS?
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  Yes. Click the <strong>HTML</strong> or
+                  <strong>CSS</strong> tab at the top to switch modes. Then open
+                  the <strong>Output</strong> tab to see your rendered page. All
+                  three languages work together and are combined and rendered
+                  live.
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                Is my code saved between sessions?
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  Yes. Your code is automatically saved to your browser's local
+                  storage after every change. Close the tab, come back later —
+                  your last code will still be there.
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">
+                What is the difference between the Console and Output tabs?
+              </summary>
+              <div class="faq-answer">
+                <p>
+                  <strong>Console</strong> shows the results of JavaScript
+                  execution — <code>console.log</code> output, errors, and
+                  return values. <strong>Output</strong> renders your HTML and
+                  CSS as a live web page inside a sandboxed frame.
+                </p>
+              </div>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-question">Is it free to use?</summary>
+              <div class="faq-answer">
+                <p>
+                  Yes, completely free with no sign-up or account required. Just
+                  open the page and start coding.
+                </p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <footer class="seo-footer">
+        <div class="section-container">
+          <div class="seo-footer-badges">
+            <a
+              href="https://github.com/finnyfound/js-console"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-badge"
+            >
+              <i data-lucide="github"></i>
+              <span>Open Source on GitHub</span>
+            </a>
+          </div>
+          <p class="seo-footer-by">
+            Built by
+            <a
+              href="https://github.com/finnyfound"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Finny Kochummen</a
+            >
+          </p>
+        </div>
+      </footer>
     </div>
 
     <!-- Monaco Editor Scripts -->
@@ -448,6 +685,33 @@
     <script type="module" src="js/main.js"></script>
 
     <script>
+      // Go to Editor floating button
+      (function () {
+        var btn = document.getElementById('go-to-editor');
+        var appContainer = document.querySelector('.app-container');
+        if (!btn || !appContainer) return;
+        var observer = new IntersectionObserver(
+          function (entries) {
+            var shouldShow = !entries[0].isIntersecting;
+            if (shouldShow && !btn.classList.contains('visible')) {
+              // Force animation replay by removing and re-adding the class
+              btn.classList.remove('visible');
+              void btn.offsetWidth;
+              btn.classList.add('visible');
+            } else if (!shouldShow) {
+              btn.classList.remove('visible');
+            }
+          },
+          { threshold: 0, rootMargin: '-60% 0px 0px 0px' },
+        );
+        observer.observe(appContainer);
+        btn.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      })();
+    </script>
+
+    <script>
       // Only initialize Vercel Analytics in main window context, not in iframes
       if (window.self === window.top) {
         window.va =
@@ -458,8 +722,12 @@
       }
     </script>
     <script>
-      // Only load Vercel Analytics script in main window context
-      if (window.self === window.top) {
+      // Only load Vercel Analytics on the deployed domain, not in local dev
+      if (
+        window.self === window.top &&
+        location.hostname !== '127.0.0.1' &&
+        location.hostname !== 'localhost'
+      ) {
         var script = document.createElement('script');
         script.defer = true;
         script.src = '/_vercel/insights/script.js';
