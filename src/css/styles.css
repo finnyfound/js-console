@@ -996,6 +996,7 @@ body.dark-theme {
   /* Mobile layout: split viewport between editor and output */
   .app-container {
     height: auto;
+    min-height: 100vh;
     min-height: 100svh;
   }
 
@@ -1006,6 +1007,7 @@ body.dark-theme {
   }
 
   .editor-section {
+    height: 45vh;
     height: 45svh;
     min-height: 200px;
     flex: none;
@@ -1013,6 +1015,7 @@ body.dark-theme {
   }
 
   .output-section {
+    height: 45vh;
     height: 45svh;
     min-height: 200px;
     flex: none;

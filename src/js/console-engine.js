@@ -210,10 +210,16 @@ JS Console Commands:
       const startTime = Date.now();
       const maxExecutionTime = 5000; // 5 seconds max
 
-      // Wrap in async IIFE to support top-level await
-      const wrappedCode = `(async () => { ${safeCode} })()`;
-      const func = new Function(...Object.keys(this.context), wrappedCode);
-      const result = func(...Object.values(this.context));
+      // Wrap in async IIFE to support top-level await; catch async errors via the engine
+      const wrappedCode = `(async () => { ${safeCode} })().catch(__asyncErrorHandler)`;
+      const func = new Function(
+        ...Object.keys(this.context),
+        '__asyncErrorHandler',
+        wrappedCode,
+      );
+      const result = func(...Object.values(this.context), (err) =>
+        this.displayDetailedError(err),
+      );
 
       // Check if execution took too long
       if (Date.now() - startTime > maxExecutionTime) {

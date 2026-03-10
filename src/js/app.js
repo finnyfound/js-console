@@ -5,12 +5,10 @@ class JSConsoleApp {
     mono: "'Source Code Pro', 'Consolas', 'Monaco', 'Courier New', monospace",
   };
 
-  // Constants for placeholder templates - must match first lines of StateManager.DEFAULT_STATE.codeContent
-  static PLACEHOLDERS = {
-    javascript: '// Welcome to JS Formatter Console!',
-    html: '<!-- Switch to the Output tab to preview this -->',
-    css: '/* Switch to the Output tab to preview styles */',
-  };
+  // Derived from StateManager.DEFAULT_STATE — single source of truth
+  static get PLACEHOLDERS() {
+    return StateManager.DEFAULT_STATE.codeContent;
+  }
 
   // Constants for localStorage keys - now handled by StateManager
   static STORAGE_KEYS = {
@@ -283,6 +281,7 @@ class JSConsoleApp {
 
   setupEditorScrollPassthrough() {
     this.addScrollPassthrough(document.getElementById('monaco-editor'), () => {
+      if (!this.editor) return false;
       const scrollHeight = this.editor.getScrollHeight();
       const layoutHeight = this.editor.getLayoutInfo().height;
       return scrollHeight > layoutHeight;
