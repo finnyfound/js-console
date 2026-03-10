@@ -210,9 +210,16 @@ JS Console Commands:
       const startTime = Date.now();
       const maxExecutionTime = 5000; // 5 seconds max
 
-      // Simple synchronous execution with timeout check
-      const func = new Function(...Object.keys(this.context), safeCode);
-      const result = func(...Object.values(this.context));
+      // Wrap in async IIFE to support top-level await; catch async errors via the engine
+      const wrappedCode = `(async () => { ${safeCode} })().catch(__asyncErrorHandler)`;
+      const func = new Function(
+        ...Object.keys(this.context),
+        '__asyncErrorHandler',
+        wrappedCode,
+      );
+      const result = func(...Object.values(this.context), (err) =>
+        this.displayDetailedError(err),
+      );
 
       // Check if execution took too long
       if (Date.now() - startTime > maxExecutionTime) {
@@ -492,41 +499,41 @@ JS Console Commands:
       // Handle Array.forEach and similar methods - inject check at start of callback
       .replace(
         /\.forEach\s*\(\s*function\s*\([^)]*\)\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       .replace(
         /\.forEach\s*\(\s*\([^)]*\)\s*=>\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       .replace(
         /\.forEach\s*\(\s*\w+\s*=>\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       // Handle Array.map, filter, reduce, etc.
       .replace(
         /\.(map|filter|reduce|some|every|find|findIndex)\s*\(\s*function\s*\([^)]*\)\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       .replace(
         /\.(map|filter|reduce|some|every|find|findIndex)\s*\(\s*\([^)]*\)\s*=>\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       .replace(
         /\.(map|filter|reduce|some|every|find|findIndex)\s*\(\s*\w+\s*=>\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       // Handle Object.keys().forEach, Object.values().forEach, Object.entries().forEach
       .replace(
         /Object\.(keys|values|entries)\([^)]*\)\.forEach\s*\(\s*function\s*\([^)]*\)\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       .replace(
         /Object\.(keys|values|entries)\([^)]*\)\.forEach\s*\(\s*\([^)]*\)\s*=>\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       )
       .replace(
         /Object\.(keys|values|entries)\([^)]*\)\.forEach\s*\(\s*\w+\s*=>\s*\{/gi,
-        (match) => match + ' __checkLoop();'
+        (match) => match + ' __checkLoop();',
       );
 
     return safetyPrefix + safeCode;

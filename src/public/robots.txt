@@ -1,4 +1,23 @@
 User-agent: *
 Allow: /
 
+# AI/LLM crawlers — allow full access for discoverability
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 Sitemap: https://console.jsformatter.net/sitemap.xml

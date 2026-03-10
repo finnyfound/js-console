@@ -5,13 +5,10 @@ class JSConsoleApp {
     mono: "'Source Code Pro', 'Consolas', 'Monaco', 'Courier New', monospace",
   };
 
-  // Constants for placeholder templates - single source of truth
-  static PLACEHOLDERS = {
-    javascript:
-      '// Enter JavaScript code here...\nconsole.log("Hello, World!");',
-    html: '<!-- Enter HTML code here... -->\n<div>\n  <h1>Hello, World!</h1>\n  <p>This is HTML content.</p>\n</div>',
-    css: `/* Enter CSS code here... */\nbody {\n  font-family: ${JSConsoleApp.FONT_FAMILIES.ui};\n  background-color: #f0f0f0;\n}`,
-  };
+  // Derived from StateManager.DEFAULT_STATE — single source of truth
+  static get PLACEHOLDERS() {
+    return StateManager.DEFAULT_STATE.codeContent;
+  }
 
   // Constants for localStorage keys - now handled by StateManager
   static STORAGE_KEYS = {
@@ -38,7 +35,7 @@ class JSConsoleApp {
     this.isDarkTheme =
       this.stateManager.getState('preferences.theme') === 'dark';
     this.currentLanguage = this.stateManager.getState(
-      'session.currentLanguage'
+      'session.currentLanguage',
     );
     this.executeTimeout = null;
     this.isSwitchingTabs = false; // Flag to prevent execution during tab switches
@@ -80,7 +77,7 @@ class JSConsoleApp {
       'state:changed:session.currentLanguage',
       (data) => {
         this.currentLanguage = data.value;
-      }
+      },
     );
 
     this.stateManager.subscribe('state:changed:codeContent', (data) => {
@@ -109,7 +106,7 @@ class JSConsoleApp {
     this.setupEventListeners();
     this.setupTabSwitching();
     this.showWelcomeMessage();
-    this.setupFloatingMenu();
+    this.setupHeaderControls();
 
     // Ensure theme icon is correct before creating icons
     this.updateThemeToggleIcon();
@@ -127,13 +124,13 @@ class JSConsoleApp {
       this.codeContexts.html &&
       this.codeContexts.html.trim() &&
       !this.codeContexts.html.includes(
-        JSConsoleApp.PLACEHOLDERS.html.split('\n')[0]
+        JSConsoleApp.PLACEHOLDERS.html.split('\n')[0],
       );
     const hasCssContent =
       this.codeContexts.css &&
       this.codeContexts.css.trim() &&
       !this.codeContexts.css.includes(
-        JSConsoleApp.PLACEHOLDERS.css.split('\n')[0]
+        JSConsoleApp.PLACEHOLDERS.css.split('\n')[0],
       );
 
     if (hasHtmlContent || hasCssContent) {
@@ -189,7 +186,7 @@ class JSConsoleApp {
             smoothScrolling: false,
             cursorBlinking: 'solid',
             cursorSmoothCaretAnimation: false,
-          }
+          },
         );
 
         // Define custom themes that match our color scheme
@@ -241,14 +238,14 @@ class JSConsoleApp {
 
         // Apply Monaco editor theme immediately after creation
         this.monaco.editor.setTheme(
-          this.isDarkTheme ? 'custom-dark' : 'custom-light'
+          this.isDarkTheme ? 'custom-dark' : 'custom-light',
         );
 
         // Ensure theme sticks with a small delay (Monaco sometimes resets themes)
         setTimeout(() => {
           if (this.monaco && this.editor) {
             this.monaco.editor.setTheme(
-              this.isDarkTheme ? 'custom-dark' : 'custom-light'
+              this.isDarkTheme ? 'custom-dark' : 'custom-light',
             );
           }
         }, 100);
@@ -258,14 +255,14 @@ class JSConsoleApp {
           monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
           () => {
             this.runEditorCode();
-          }
+          },
         );
 
         this.editor.addCommand(
           monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF,
           () => {
             this.formatEditorCode();
-          }
+          },
         );
 
         // Setup auto-run on content change
@@ -273,9 +270,41 @@ class JSConsoleApp {
           this.handleEditorChange();
         });
 
+        // Scroll passthrough: if editor has no scrollable content, wheel over
+        // it scrolls the page instead of being swallowed by Monaco
+        this.setupEditorScrollPassthrough();
+
         resolve();
       });
     });
+  }
+
+  setupEditorScrollPassthrough() {
+    this.addScrollPassthrough(document.getElementById('monaco-editor'), () => {
+      if (!this.editor) return false;
+      const scrollHeight = this.editor.getScrollHeight();
+      const layoutHeight = this.editor.getLayoutInfo().height;
+      return scrollHeight > layoutHeight;
+    });
+
+    this.addScrollPassthrough(document.getElementById('console-log'), (el) => {
+      return el.scrollHeight > el.clientHeight;
+    });
+  }
+
+  addScrollPassthrough(el, isScrollableFn) {
+    if (!el) return;
+    el.addEventListener(
+      'wheel',
+      (e) => {
+        if (!isScrollableFn(el)) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          window.scrollBy({ top: e.deltaY, left: 0 });
+        }
+      },
+      { passive: false, capture: true },
+    );
   }
 
   setupEventListeners() {
@@ -483,7 +512,7 @@ class JSConsoleApp {
       // Save to state manager
       this.stateManager.setState(
         `codeContent.${this.currentLanguage}`,
-        currentCode
+        currentCode,
       );
     }
 
@@ -563,13 +592,13 @@ class JSConsoleApp {
     // Save theme preference to state manager
     this.stateManager.setState(
       'preferences.theme',
-      this.isDarkTheme ? 'dark' : 'light'
+      this.isDarkTheme ? 'dark' : 'light',
     );
 
     this.applyTheme();
 
     this.updateStatus(
-      `Switched to ${this.isDarkTheme ? 'dark' : 'light'} theme`
+      `Switched to ${this.isDarkTheme ? 'dark' : 'light'} theme`,
     );
   }
 
@@ -609,6 +638,9 @@ class JSConsoleApp {
           lucide.createIcons();
         }
       }
+
+      // In dark mode show amber/sun color; in light mode show indigo/moon color
+      themeButton.classList.toggle('theme-btn--sun', this.isDarkTheme);
     }
   }
 
@@ -620,7 +652,7 @@ class JSConsoleApp {
     if (this.editor && this.monaco) {
       try {
         this.monaco.editor.setTheme(
-          this.isDarkTheme ? 'custom-dark' : 'custom-light'
+          this.isDarkTheme ? 'custom-dark' : 'custom-light',
         );
       } catch (error) {
         console.warn('Failed to update Monaco editor theme:', error);
@@ -680,7 +712,7 @@ class JSConsoleApp {
       this.codeContexts[this.currentLanguage] = currentCode;
       this.stateManager.setState(
         `codeContent.${this.currentLanguage}`,
-        currentCode
+        currentCode,
       );
 
       // HTML/CSS always auto-render
@@ -694,7 +726,7 @@ class JSConsoleApp {
         const hasHtmlContent =
           this.codeContexts.html.trim() &&
           !this.codeContexts.html.includes(
-            JSConsoleApp.PLACEHOLDERS.html.split('\n')[0]
+            JSConsoleApp.PLACEHOLDERS.html.split('\n')[0],
           );
 
         if (hasHtmlContent) {
@@ -732,7 +764,7 @@ class JSConsoleApp {
       this.toggleAutoRun();
       setTimeout(() => {
         this.updateStatus(
-          'Emergency stop complete - Auto-run disabled for safety'
+          'Emergency stop complete - Auto-run disabled for safety',
         );
       }, 1000);
     }
@@ -767,99 +799,47 @@ class JSConsoleApp {
     ]);
   }
 
-  setupFloatingMenu() {
-    const floatingMenuToggle = document.getElementById('floating-menu-toggle');
-    const floatingMenu = document.getElementById('floating-menu');
-    const floatingHelp = document.getElementById('floating-help');
-    const floatingFontIncrease = document.getElementById(
-      'floating-font-increase'
+  setupHeaderControls() {
+    const headerHelp = document.getElementById('header-help');
+    const headerFontIncrease = document.getElementById('header-font-increase');
+    const headerFontDecrease = document.getElementById('header-font-decrease');
+    const headerLoopProtection = document.getElementById(
+      'header-loop-protection',
     );
-    const floatingFontDecrease = document.getElementById(
-      'floating-font-decrease'
-    );
-    const floatingLoopProtection = document.getElementById(
-      'floating-loop-protection'
-    );
-    const floatingAbout = document.getElementById('floating-about');
-    const aboutModal = document.getElementById('about-modal');
-    const aboutModalClose = document.getElementById('close-about-modal');
 
-    // Toggle menu visibility
-    floatingMenuToggle?.addEventListener('click', () => {
-      floatingMenu.classList.toggle('active');
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!floatingMenu.contains(e.target) && !aboutModal.contains(e.target)) {
-        floatingMenu.classList.remove('active');
-      }
-    });
-
-    // Help functionality
-    floatingHelp?.addEventListener('click', () => {
+    headerHelp?.addEventListener('click', () => {
       this.consoleEngine.context.help();
-      floatingMenu.classList.remove('active');
     });
 
-    // Font size increase functionality
-    floatingFontIncrease?.addEventListener('click', () => {
+    headerFontIncrease?.addEventListener('click', () => {
       this.increaseFontSize();
-      floatingMenu.classList.remove('active');
     });
 
-    // Font size decrease functionality
-    floatingFontDecrease?.addEventListener('click', () => {
+    headerFontDecrease?.addEventListener('click', () => {
       this.decreaseFontSize();
-      floatingMenu.classList.remove('active');
     });
 
-    // Loop protection toggle functionality
-    floatingLoopProtection?.addEventListener('click', () => {
+    headerLoopProtection?.addEventListener('click', () => {
       this.toggleLoopProtection();
-      floatingMenu.classList.remove('active');
     });
 
-    // Update loop protection text based on current state
-    if (floatingLoopProtection) {
-      const textSpan = floatingLoopProtection.querySelector('span');
-      if (textSpan) {
-        const isEnabled = this.consoleEngine.getLoopProtection();
-        textSpan.textContent = isEnabled
-          ? 'Disable Loop Protection'
-          : 'Enable Loop Protection';
-      }
-    }
+    // Set initial loop protection button state
+    this.updateLoopProtectionButton();
 
-    // About modal functionality
-    floatingAbout?.addEventListener('click', () => {
-      aboutModal.classList.add('active');
-      floatingMenu.classList.remove('active');
-    });
-
-    // Close about modal
-    aboutModalClose?.addEventListener('click', () => {
-      aboutModal.classList.remove('active');
-    });
-
-    // Close modal when clicking overlay
-    aboutModal?.addEventListener('click', (e) => {
-      if (e.target === aboutModal) {
-        aboutModal.classList.remove('active');
-      }
-    });
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && aboutModal.classList.contains('active')) {
-        aboutModal.classList.remove('active');
-      }
-    });
-
-    // Initialize Lucide icons for the floating menu
     if (typeof lucide !== 'undefined' && lucide.createIcons) {
       lucide.createIcons();
     }
+  }
+
+  updateLoopProtectionButton() {
+    const btn = document.getElementById('header-loop-protection');
+    if (!btn) return;
+    const isEnabled = this.consoleEngine.getLoopProtection();
+    btn.title = isEnabled
+      ? 'Disable Loop Protection'
+      : 'Enable Loop Protection';
+    btn.classList.toggle('icon-btn--active', isEnabled);
+    btn.classList.toggle('icon-btn--inactive', !isEnabled);
   }
 
   downloadCode() {
@@ -903,22 +883,7 @@ class JSConsoleApp {
 
   toggleLoopProtection() {
     const newState = this.consoleEngine.toggleLoopProtection();
-
-    // Update floating menu item text to reflect current state
-    const floatingLoopProtection = document.getElementById(
-      'floating-loop-protection'
-    );
-    if (floatingLoopProtection) {
-      const textSpan = floatingLoopProtection.querySelector('span');
-      if (textSpan) {
-        textSpan.textContent = newState
-          ? 'Disable Loop Protection'
-          : 'Enable Loop Protection';
-      }
-    }
-
-    // Note: Loop protection state is not persisted - always resets to enabled on refresh
-
+    this.updateLoopProtectionButton();
     return newState;
   }
 

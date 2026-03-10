@@ -21,10 +21,130 @@ class StateManager {
       minimap: false,
     },
     codeContent: {
-      javascript:
-        '// Enter JavaScript code here...\nconsole.log("Hello, World!");',
-      html: '<!-- Enter HTML code here... -->\n<div>\n  <h1>Hello, World!</h1>\n  <p>This is HTML content.</p>\n</div>',
-      css: '/* Enter CSS code here... */\nbody {\n  font-family: Arial, sans-serif;\n  background-color: #f0f0f0;\n}',
+      javascript: `// Welcome to JS Formatter Console!
+// Press Ctrl+Enter (Cmd+Enter on Mac) to run.
+
+// --- Logging ---
+console.log("Hello from JS Console!");
+console.info("Supports info, warn, and error too.");
+console.warn("This is a warning.");
+console.error("This is an error.");
+
+// --- Objects & Arrays ---
+const user = { name: "Finny", role: "developer", active: true };
+console.log("User:", user);
+
+const nums = [1, 2, 3, 4, 5];
+const doubled = nums.map(n => n * 2);
+console.log("Doubled:", doubled);
+
+// --- Async ---
+const result = await Promise.resolve("Async works too!");
+console.log(result);`,
+      html: `<!-- Switch to the Output tab to preview this -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Preview</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="card">
+    <div class="badge">Live Preview</div>
+    <h1>JS Formatter Console</h1>
+    <p>Edit the <strong>HTML</strong> and <strong>CSS</strong> tabs, then check the <strong>Output</strong> tab to see your page rendered live.</p>
+    <div class="features">
+      <div class="feature">⚡ JavaScript</div>
+      <div class="feature">🎨 CSS</div>
+      <div class="feature">📄 HTML</div>
+    </div>
+    <button onclick="this.textContent = '🎉 It works!'" class="btn">Click me</button>
+  </div>
+</body>
+</html>`,
+      css: `/* Switch to the Output tab to preview styles */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0d1117;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.card {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(8,145,178,0.15);
+  color: #22d3ee;
+  border: 1px solid rgba(8,145,178,0.3);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  margin-bottom: 1.25rem;
+}
+
+h1 {
+  color: #e6edf3;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+p {
+  color: #7d8590;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.features {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+}
+
+.feature {
+  background: #21262d;
+  color: #e6edf3;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btn {
+  background: #0891b2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: #0e7490;
+}`,
     },
     session: {
       currentLanguage: 'javascript',
@@ -49,7 +169,7 @@ class StateManager {
   loadState() {
     try {
       const storedState = localStorage.getItem(
-        StateManager.STORAGE_KEYS.appState
+        StateManager.STORAGE_KEYS.appState,
       );
 
       if (!storedState) {
@@ -141,7 +261,7 @@ class StateManager {
         this.state.session.lastSaved = new Date().toISOString();
         localStorage.setItem(
           StateManager.STORAGE_KEYS.appState,
-          JSON.stringify(this.state)
+          JSON.stringify(this.state),
         );
         this.notifySubscribers('state:saved', {
           timestamp: this.state.session.lastSaved,
@@ -346,7 +466,7 @@ class StateManager {
       stateSize: JSON.stringify(this.state).length,
       subscriberCount: Array.from(this.subscribers.values()).reduce(
         (total, set) => total + set.size,
-        0
+        0,
       ),
     };
   }
