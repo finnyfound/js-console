@@ -177,6 +177,7 @@ class JSConsoleApp {
             automaticLayout: true,
             scrollBeyondLastLine: false,
             wordWrap: 'on',
+            accessibilitySupport: 'off',
             lineNumbers: 'on',
             folding: true,
             contextmenu: true,

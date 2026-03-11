@@ -29,15 +29,17 @@ class HTMLRenderer {
     // Combine all CSS (built-in + custom + user CSS)
     const allStyles = `
             /* Base styles for better rendering */
+            html {
+                height: 100%;
+            }
            body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                margin: 20px;
-                padding: 0px;
-       
+                margin: 0;
+                padding: 0;
+                min-height: 100%;
                 line-height: 1.6;
                 color: ${textColor};
                 background-color: ${bgColor};
-               
             }
             * {
                 box-sizing: border-box;
@@ -145,7 +147,7 @@ class HTMLRenderer {
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
             document.body.insertAdjacentHTML('beforeend', 
-                '<div style="background: #ffe6e6; border: 1px solid #ff6b6b; padding: 10px; margin: 10px 0; border-radius: 4px;">' +
+                '<div role="alert" style="background: #ffe6e6; border: 1px solid #ff6b6b; padding: 10px; margin: 10px 0; border-radius: 4px;">' +
                 '<strong>JavaScript Error:</strong> ' + escapedMessage + 
                 '</div>'
             );
@@ -254,7 +256,7 @@ class HTMLRenderer {
     if (headers) {
       html += '<thead><tr>';
       headers.forEach((header) => {
-        html += `<th style="padding: 8px; background-color: #f5f5f5;">${header}</th>`;
+        html += `<th scope="col" style="padding: 8px; background-color: #f5f5f5;">${header}</th>`;
       });
       html += '</tr></thead>';
     }
