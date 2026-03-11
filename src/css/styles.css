@@ -37,6 +37,14 @@ body.dark-theme {
   height: 100vh;
 }
 
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
 /* Header */
 .app-header {
   display: flex;
@@ -66,13 +74,21 @@ body.dark-theme {
 
 .title-subtitle {
   font-weight: 400;
-  opacity: 0.8;
+  color: #0e7490;
+}
+
+.dark-theme .title-subtitle {
+  color: #22d3ee;
 }
 
 .title-url {
   font-size: 0.85em;
   font-weight: 400;
-  opacity: 0.5;
+  color: #546e7a;
+}
+
+.dark-theme .title-url {
+  color: #67bdcc;
 }
 
 @media (max-width: 768px) {
@@ -178,8 +194,15 @@ body.dark-theme {
 .tab-language {
   font-size: 10px;
   font-weight: 400;
-  opacity: 0.7;
   margin-top: 1px;
+}
+
+.language-tab.active .tab-language {
+  color: #0e7490;
+}
+
+.dark-theme .language-tab.active .tab-language {
+  color: #22d3ee;
 }
 
 /* Dark theme for language tabs */
@@ -841,7 +864,7 @@ body.dark-theme {
   justify-content: space-between;
   align-items: center;
   padding: 4px 12px;
-  background-color: #0891b2;
+  background-color: #0e7490;
   color: #fff;
   font-size: 13px;
   min-height: 24px;
@@ -998,6 +1021,10 @@ body.dark-theme {
     height: auto;
     min-height: 100vh;
     min-height: 100svh;
+  }
+
+  .app-content {
+    overflow: visible;
   }
 
   .app-main {
@@ -1450,14 +1477,14 @@ body.dark-theme {
 }
 
 /* ============================================================
-   SEO Content Sections
+   Landing Content Sections
    ============================================================ */
 
-.seo-content {
+.landing-content {
   background-color: #f5f5f5;
 }
 
-.dark-theme .seo-content {
+.dark-theme .landing-content {
   background-color: #0d1117;
 }
 
@@ -1830,19 +1857,19 @@ body.dark-theme {
   color: #ff7b72;
 }
 
-/* ---- SEO Footer ---- */
+/* ---- Landing Footer ---- */
 
-.seo-footer {
+.landing-footer {
   padding: 28px 0;
   border-top: 1px solid #e1e1e1;
   text-align: center;
 }
 
-.dark-theme .seo-footer {
+.dark-theme .landing-footer {
   border-top-color: #21262d;
 }
 
-.seo-footer-badges {
+.landing-footer-badges {
   display: flex;
   justify-content: center;
   gap: 12px;
@@ -1897,25 +1924,25 @@ body.dark-theme {
   color: #8b949e;
 }
 
-.seo-footer-by {
+.landing-footer-by {
   font-size: 0.875rem;
   color: #777;
 }
 
-.dark-theme .seo-footer-by {
+.dark-theme .landing-footer-by {
   color: #8b949e;
 }
 
-.seo-footer a {
+.landing-footer a {
   color: #0891b2;
   text-decoration: none;
 }
 
-.dark-theme .seo-footer a {
+.dark-theme .landing-footer a {
   color: #67e8f9;
 }
 
-.seo-footer a:hover {
+.landing-footer a:hover {
   text-decoration: underline;
 }
 
@@ -1996,7 +2023,7 @@ body.dark-theme {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* ---- Responsive: SEO Sections ---- */
+/* ---- Responsive: Landing Sections ---- */
 
 @media (max-width: 768px) {
   .features-grid,

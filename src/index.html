@@ -58,7 +58,7 @@
     <link rel="canonical" href="https://console.jsformatter.net" />
     <link rel="icon" type="image/png" href="favicon.png" />
 
-    <!-- Structured Data for SEO -->
+    <!-- Structured Data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -197,7 +197,7 @@
             >| console.jsformatter.net</span
           >
         </h1>
-        <div class="header-controls">
+        <nav class="header-controls" aria-label="Application tools">
           <button
             id="emergency-stop"
             class="icon-btn danger emergency"
@@ -223,7 +223,7 @@
           >
             <i data-lucide="zoom-out"></i>
           </button>
-          <div class="header-divider"></div>
+          <div class="header-divider" aria-hidden="true"></div>
           <button
             id="header-loop-protection"
             class="icon-btn icon-btn--active"
@@ -234,146 +234,183 @@
           <button id="toggle-theme" class="icon-btn" title="Toggle Theme">
             <i data-lucide="moon"></i>
           </button>
-        </div>
+        </nav>
       </header>
 
-      <div class="language-tabs">
-        <div class="language-section">
-          <div class="language-tab-buttons">
-            <button class="language-tab active" data-language="javascript">
-              <span class="tab-icon"><i data-lucide="zap"></i></span>
-              <span class="tab-content">
-                <span class="tab-filename">main.js</span>
-                <span class="tab-language">JavaScript</span>
-              </span>
-            </button>
-            <button class="language-tab" data-language="html">
-              <span class="tab-icon"><i data-lucide="code"></i></span>
-              <span class="tab-content">
-                <span class="tab-filename">index.html</span>
-                <span class="tab-language">HTML</span>
-              </span>
-            </button>
-            <button class="language-tab" data-language="css">
-              <span class="tab-icon"><i data-lucide="palette"></i></span>
-              <span class="tab-content">
-                <span class="tab-filename">style.css</span>
-                <span class="tab-language">CSS</span>
-              </span>
-            </button>
-          </div>
-          <div class="editor-controls">
-            <button id="format-code" class="icon-btn" title="Format Code">
-              <i data-lucide="align-left"></i>
-              <span>Format</span>
-            </button>
-          </div>
-        </div>
-        <div class="output-section-tabs">
-          <div class="output-tabs">
-            <div class="output-tab-buttons">
-              <button class="tab-button active" data-tab="console">
-                <span class="tab-icon"><i data-lucide="terminal"></i></span>
-                <span>Console</span>
+      <main class="app-content">
+        <div class="language-tabs">
+          <section class="language-section" aria-label="Language Selection">
+            <nav class="language-tab-buttons" aria-label="Languages">
+              <button
+                class="language-tab active"
+                data-language="javascript"
+                aria-current="page"
+              >
+                <span class="tab-icon" aria-hidden="true"
+                  ><i data-lucide="zap"></i
+                ></span>
+                <span class="tab-content">
+                  <span class="tab-filename">main.js</span>
+                  <span class="tab-language">JavaScript</span>
+                </span>
               </button>
-              <button class="tab-button" data-tab="render">
-                <span class="tab-icon"><i data-lucide="monitor"></i></span>
-                <span>Output</span>
+              <button class="language-tab" data-language="html">
+                <span class="tab-icon" aria-hidden="true"
+                  ><i data-lucide="code"></i
+                ></span>
+                <span class="tab-content">
+                  <span class="tab-filename">index.html</span>
+                  <span class="tab-language">HTML</span>
+                </span>
+              </button>
+              <button class="language-tab" data-language="css">
+                <span class="tab-icon" aria-hidden="true"
+                  ><i data-lucide="palette"></i
+                ></span>
+                <span class="tab-content">
+                  <span class="tab-filename">style.css</span>
+                  <span class="tab-language">CSS</span>
+                </span>
+              </button>
+            </nav>
+            <div class="editor-controls">
+              <button id="format-code" class="icon-btn" title="Format Code">
+                <i data-lucide="align-left" aria-hidden="true"></i>
+                <span>Format</span>
               </button>
             </div>
-            <div class="output-controls">
-              <button
-                id="clear-console"
-                class="icon-btn tab-clear-btn"
-                title="Clear Console"
-                data-tab-target="console"
-              >
-                <i data-lucide="trash-2"></i>
-              </button>
-              <button
-                id="clear-render"
-                class="icon-btn tab-clear-btn"
-                title="Clear Output"
-                data-tab-target="render"
-                style="display: none"
-              >
-                <i data-lucide="eraser"></i>
-              </button>
+          </section>
+          <section class="output-section-tabs" aria-label="Output Selection">
+            <div class="output-tabs">
+              <nav class="output-tab-buttons" aria-label="Output Views">
+                <button
+                  class="tab-button active"
+                  data-tab="console"
+                  aria-current="page"
+                >
+                  <span class="tab-icon" aria-hidden="true"
+                    ><i data-lucide="terminal"></i
+                  ></span>
+                  <span>Console</span>
+                </button>
+                <button class="tab-button" data-tab="render">
+                  <span class="tab-icon" aria-hidden="true"
+                    ><i data-lucide="monitor"></i
+                  ></span>
+                  <span>Output</span>
+                </button>
+              </nav>
+              <div class="output-controls">
+                <button
+                  id="clear-console"
+                  class="icon-btn tab-clear-btn"
+                  title="Clear Console"
+                  data-tab-target="console"
+                >
+                  <i data-lucide="trash-2" aria-hidden="true"></i>
+                </button>
+                <button
+                  id="clear-render"
+                  class="icon-btn tab-clear-btn"
+                  title="Clear Output"
+                  data-tab-target="render"
+                  style="display: none"
+                >
+                  <i data-lucide="eraser" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
-      </div>
 
-      <main class="app-main" aria-label="Code editor and console">
-        <div class="editor-section">
-          <div id="monaco-editor" class="monaco-editor-container"></div>
-        </div>
-
-        <div class="output-section">
-          <!-- Mobile output tabs (hidden on desktop) -->
-          <div class="mobile-output-tabs">
-            <div class="mobile-output-tab-buttons">
-              <button class="mobile-tab-button active" data-tab="console">
-                <span class="tab-icon"><i data-lucide="terminal"></i></span>
-                <span>Console</span>
-              </button>
-              <button class="mobile-tab-button" data-tab="render">
-                <span class="tab-icon"><i data-lucide="monitor"></i></span>
-                <span>Output</span>
-              </button>
-            </div>
-            <div class="mobile-output-controls">
-              <button
-                class="icon-btn tab-clear-btn mobile-clear-btn mobile-clear-console"
-                title="Clear Console"
-                data-tab-target="console"
-              >
-                <i data-lucide="trash-2"></i>
-              </button>
-              <button
-                class="icon-btn tab-clear-btn mobile-clear-btn mobile-clear-render"
-                title="Clear Output"
-                data-tab-target="render"
-                style="display: none"
-              >
-                <i data-lucide="eraser"></i>
-              </button>
-            </div>
+        <section class="app-main" aria-label="Code editor and console">
+          <div class="editor-section">
+            <div id="monaco-editor" class="monaco-editor-container"></div>
           </div>
 
-          <div id="console-output" class="output-panel active">
-            <div class="console-content">
-              <div id="console-log" class="console-log"></div>
+          <div class="output-section">
+            <!-- Mobile output tabs (hidden on desktop) -->
+            <nav class="mobile-output-tabs" aria-label="Mobile Output Views">
+              <div class="mobile-output-tab-buttons">
+                <button
+                  class="mobile-tab-button active"
+                  data-tab="console"
+                  aria-current="page"
+                >
+                  <span class="tab-icon" aria-hidden="true"
+                    ><i data-lucide="terminal"></i
+                  ></span>
+                  <span>Console</span>
+                </button>
+                <button class="mobile-tab-button" data-tab="render">
+                  <span class="tab-icon" aria-hidden="true"
+                    ><i data-lucide="monitor"></i
+                  ></span>
+                  <span>Output</span>
+                </button>
+              </div>
+              <div class="mobile-output-controls">
+                <button
+                  class="icon-btn tab-clear-btn mobile-clear-btn mobile-clear-console"
+                  title="Clear Console"
+                  data-tab-target="console"
+                >
+                  <i data-lucide="trash-2" aria-hidden="true"></i>
+                </button>
+                <button
+                  class="icon-btn tab-clear-btn mobile-clear-btn mobile-clear-render"
+                  title="Clear Output"
+                  data-tab-target="render"
+                  style="display: none"
+                >
+                  <i data-lucide="eraser" aria-hidden="true"></i>
+                </button>
+              </div>
+            </nav>
+
+            <div id="console-output" class="output-panel active">
+              <div class="console-content">
+                <div id="console-log" class="console-log"></div>
+              </div>
+            </div>
+
+            <div id="html-render" class="output-panel">
+              <iframe
+                id="render-frame"
+                class="render-frame"
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                title="HTML and CSS Output Render"
+              ></iframe>
             </div>
           </div>
+        </section>
 
-          <div id="html-render" class="output-panel">
-            <iframe
-              id="render-frame"
-              class="render-frame"
-              sandbox="allow-scripts allow-same-origin allow-forms"
-            ></iframe>
-          </div>
-        </div>
+        <footer class="status-bar" aria-label="Editor Status">
+          <span id="status-text" aria-live="polite">Ready</span>
+          <span id="execution-time" aria-atomic="true"></span>
+        </footer>
       </main>
-
-      <div class="status-bar">
-        <span id="status-text">Ready</span>
-        <span id="execution-time"></span>
-      </div>
     </div>
 
-    <button class="go-to-editor" id="go-to-editor" aria-label="Go to Editor">
+    <button
+      class="go-to-editor"
+      id="go-to-editor"
+      aria-label="Go to Editor"
+      tabindex="-1"
+    >
       <i data-lucide="arrow-up"></i>
       <span>Go to Editor</span>
     </button>
 
-    <!-- SEO Content Sections -->
-    <div class="seo-content">
+    <article class="landing-content" aria-label="About JS Formatter Console">
       <!-- Features Section -->
-      <section class="features-section" id="features" aria-label="Features">
+      <section
+        class="features-section"
+        id="features"
+        aria-labelledby="features-heading"
+      >
         <div class="section-container">
-          <h2 class="section-title">
+          <h2 id="features-heading" class="section-title">
             Everything you need to write JavaScript online
           </h2>
           <p class="section-subtitle">
@@ -455,10 +492,10 @@
       <section
         class="use-cases-section"
         id="use-cases"
-        aria-label="Who is this for"
+        aria-labelledby="use-cases-heading"
       >
         <div class="section-container">
-          <h2 class="section-title">Who is it for?</h2>
+          <h2 id="use-cases-heading" class="section-title">Who is it for?</h2>
           <div class="use-cases-grid">
             <div class="use-case-card">
               <div class="use-case-icon use-case-icon--indigo">
@@ -497,13 +534,9 @@
       </section>
 
       <!-- FAQ Section -->
-      <section
-        class="faq-section"
-        id="faq"
-        aria-label="Frequently asked questions"
-      >
+      <section class="faq-section" id="faq" aria-labelledby="faq-heading">
         <div class="section-container">
-          <h2 class="section-title">Have questions?</h2>
+          <h2 id="faq-heading" class="section-title">Have questions?</h2>
           <div class="faq-list">
             <details class="faq-item">
               <summary class="faq-question">
@@ -570,20 +603,20 @@
         </div>
       </section>
 
-      <footer class="seo-footer">
+      <footer class="landing-footer">
         <div class="section-container">
-          <div class="seo-footer-badges">
+          <div class="landing-footer-badges">
             <a
               href="https://github.com/finnyfound/js-console"
               target="_blank"
               rel="noopener noreferrer"
               class="footer-badge"
             >
-              <i data-lucide="github"></i>
+              <i data-lucide="github" aria-hidden="true"></i>
               <span>Open Source on GitHub</span>
             </a>
           </div>
-          <p class="seo-footer-by">
+          <p class="landing-footer-by">
             Built by
             <a
               href="https://github.com/finnyfound"
@@ -594,7 +627,7 @@
           </p>
         </div>
       </footer>
-    </div>
+    </article>
 
     <!-- Monaco Editor Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
@@ -645,7 +678,7 @@
       });
     </script>
 
-    <!-- SEO: Noscript fallback for crawlers -->
+    <!-- Noscript fallback -->
     <noscript>
       <div
         style="
@@ -698,8 +731,10 @@
               btn.classList.remove('visible');
               void btn.offsetWidth;
               btn.classList.add('visible');
+              btn.removeAttribute('tabindex');
             } else if (!shouldShow) {
               btn.classList.remove('visible');
+              btn.setAttribute('tabindex', '-1');
             }
           },
           { threshold: 0, rootMargin: '-60% 0px 0px 0px' },
